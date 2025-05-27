@@ -193,6 +193,7 @@ export default function WeeklyPlanBuilder() {
       content: {
         subtitle: "Upcoming deliverables and key milestones for the week",
         backgroundImage: "/placeholder.svg?height=200&width=800",
+        backgroundImage2: "/placeholder.svg?height=200&width=800",
         useCustomImage: false,
         overlayText: "Milestone Timeline Placeholder",
       },
@@ -650,7 +651,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
-                  <div className=" px-8 py-12 bg-gray-50">
+                  <div className=" px-8 py-12 ">
                     <div className="flex items-center gap-3 mb-8 relative">
                       <h2 className=" text-[45px] font-bold whitespace-nowrap text-start">
                         <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
@@ -705,16 +706,53 @@ export default function WeeklyPlanBuilder() {
                 {/* Planned Tasks & Milestone */}
                 {sections.find((s) => s.id === "milestones")?.visible && (
                   <div className="px-8 py-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Planned Tasks & Milestone</h2>
-                    <p className="text-gray-600 mb-6">
+                    <div className="flex items-center justify-center my-8">
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                      <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
+                        <span className="text-[#555] leading-[0.1] text-[38px] ">Planned Tasks &</span>
+                        <span className="text-[#000] block text-[58px] leading-[0.8]">Milestone</span>
+                      </h2>
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                    </div>
+                    <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
                       {sections.find((s) => s.id === "milestones")?.content.subtitle}
                     </p>
 
-                    <div className="relative h-48 rounded-lg overflow-hidden">
+                    <div className="relative  rounded-lg overflow-hidden">
                       {sections.find((s) => s.id === "milestones")?.content.useCustomImage ? (
                         <img
                           src={
                             sections.find((s) => s.id === "milestones")?.content.backgroundImage || "/placeholder.svg"
+                          }
+                          alt="Milestone Background"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div
+                          className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
+                          style={{
+                            backgroundColor:
+                              sections.find((s) => s.id === "milestones")?.styles?.backgroundColor || "#F3F4F6",
+                            backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                            backgroundSize: "20px 20px",
+                          }}
+                        >
+                          <p
+                            className="font-medium"
+                            style={{
+                              color: sections.find((s) => s.id === "milestones")?.styles?.textColor || "#6B7280",
+                            }}
+                          >
+                            {sections.find((s) => s.id === "milestones")?.content.overlayText}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="relative mt-16 rounded-lg overflow-hidden">
+                      {sections.find((s) => s.id === "milestones")?.content.useCustomImage ? (
+                        <img
+                          src={
+                            sections.find((s) => s.id === "milestones")?.content.backgroundImage2 || "/placeholder.svg"
                           }
                           alt="Milestone Background"
                           className="w-full h-full object-cover"
@@ -1184,6 +1222,15 @@ export default function WeeklyPlanBuilder() {
                                 type="text"
                                 value={section.content.backgroundImage}
                                 onChange={(e) => updateSectionContent(section.id, "backgroundImage", e.target.value)}
+                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                placeholder="Background image URL"
+                              />
+                            )}
+                            {section.content.useCustomImage && (
+                              <input
+                                type="text"
+                                value={section.content.backgroundImage2}
+                                onChange={(e) => updateSectionContent(section.id, "backgroundImage2", e.target.value)}
                                 className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                                 placeholder="Background image URL"
                               />
