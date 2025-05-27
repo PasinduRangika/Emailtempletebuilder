@@ -53,6 +53,7 @@ interface Project {
   status: string;
   priority: string;
   imageUrl?: string;
+  bgColor: string;
 }
 
 export default function WeeklyPlanBuilder() {
@@ -88,10 +89,35 @@ export default function WeeklyPlanBuilder() {
           { id: "1", title: "On Track", color: "green", description: "Projects proceeding as planned" },
           { id: "2", title: "Needs Attention", color: "yellow", description: "Requires monitoring" },
           { id: "3", title: "Blocked", color: "red", description: "Issues need resolution" },
-          // { id: "4", title: "Completed", color: "blue", description: "Successfully finished" },
         ],
         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
         statusItems: [
+          {
+            id: "1",
+            icon: "check",
+            title: "Database Migration",
+            description: "Successfully migrated user data to new infrastructure",
+            nextStep: "Monitor performance metrics",
+            status: "completed",
+          },
+          {
+            id: "2",
+            icon: "clock",
+            title: "Frontend QA",
+            description: "Quality assurance testing in progress",
+            nextStep: "Complete regression testing",
+            status: "progress",
+          },
+          {
+            id: "3",
+            icon: "warning",
+            title: "API Integration",
+            description: "Third-party API experiencing intermittent issues",
+            nextStep: "Contact vendor support",
+            status: "blocked",
+          },
+        ],
+        nextItems: [
           {
             id: "1",
             icon: "check",
@@ -123,7 +149,9 @@ export default function WeeklyPlanBuilder() {
       id: "updates",
       title: "Important Updates",
       visible: true,
+
       content: {
+        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
         projects: [
           {
             id: "1",
@@ -132,7 +160,8 @@ export default function WeeklyPlanBuilder() {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
             status: "In Progress",
             priority: "High",
-            imageUrl: "/placeholder.svg?height=80&width=120",
+            imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
+            bgColor: "blue",
           },
           {
             id: "2",
@@ -141,7 +170,18 @@ export default function WeeklyPlanBuilder() {
               "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
             status: "Review",
             priority: "Medium",
-            imageUrl: "/placeholder.svg?height=80&width=120",
+            imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
+            bgColor: "green",
+          },
+          {
+            id: "3",
+            title: "Overall Project",
+            description:
+              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+            status: "Review",
+            priority: "Medium",
+            imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
+            bgColor: "orange",
           },
         ],
       },
@@ -282,6 +322,39 @@ export default function WeeklyPlanBuilder() {
     if (section) {
       const updatedItems = section.content.statusItems.filter((item: StatusItem) => item.id !== itemId);
       updateSectionContent(sectionId, "statusItems", updatedItems);
+    }
+  };
+
+  const addNextItem = (sectionId: string) => {
+    const newItem = {
+      id: Date.now().toString(),
+      icon: "check",
+      title: "New Task",
+      description: "Task description",
+      nextStep: "Next step",
+      status: "progress",
+    };
+    const section = sections.find((s) => s.id === sectionId);
+    if (section) {
+      updateSectionContent(sectionId, "nextItems", [...section.content.nextItems, newItem]);
+    }
+  };
+
+  const updateNextItem = (sectionId: string, itemId: string, field: string, value: string) => {
+    const section = sections.find((s) => s.id === sectionId);
+    if (section) {
+      const updatedItems = section.content.nextItems.map((item: StatusItem) =>
+        item.id === itemId ? { ...item, [field]: value } : item
+      );
+      updateSectionContent(sectionId, "nextItems", updatedItems);
+    }
+  };
+
+  const removeNextItem = (sectionId: string, itemId: string) => {
+    const section = sections.find((s) => s.id === sectionId);
+    if (section) {
+      const updatedItems = section.content.nextItems.filter((item: StatusItem) => item.id !== itemId);
+      updateSectionContent(sectionId, "nextItems", updatedItems);
     }
   };
 
@@ -511,34 +584,53 @@ export default function WeeklyPlanBuilder() {
                         {sections.find((s) => s.id === "summary")?.content.text}
                       </p>
                     </div>
-                    <div className=" bg-[#0084EE] p-4 mb-4 rounded-t-xl items-center d-flex">
-                      <h2 className="text-[#fff] font-bold">STATUS UPDATE</h2>
-                    </div>
+                    <div className="border-t border-[#DDD] p-10 mb-8 rounded-xl" style={{ borderWidth: "2px" }}>
+                      <div className=" bg-[#0084EE] p-4 mb-4 rounded-t-xl items-center d-flex">
+                        <h2 className="text-[#fff] font-bold">STATUS UPDATE</h2>
+                      </div>
 
-                    <div className="grid grid-cols-3 gap-4 mb-8">
+                      <div className="grid grid-cols-3 gap-4 mb-8">
+                        {sections
+                          .find((s) => s.id === "summary")
+                          ?.content.statusCards.map((card: StatusCard) => (
+                            <div key={card.id} className="bg-white  overflow-hidden">
+                              <div
+                                className={`${getStatusCardColor(card.color)} text-white p-3 text-center font-semibold`}
+                              >
+                                {card.title}
+                              </div>
+                              <div className="p-4 bg-[#f8f8f8]">
+                                <p className={`${getTextColor(card.color)} text-[12px] text-center`}>
+                                  {card.description}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      {/* Overall Status */}
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px]">Overall Status:</h3>
+                      <div>
+                        {sections
+                          .find((s) => s.id === "summary")
+                          ?.content.statusItems.map((item: StatusItem) => (
+                            <div key={item.id}>
+                              <div className="flex items-center">
+                                <div className="flex-shrink-0 w-10 h-10  flex items-center justify-center">
+                                  {getStatusIcon(item.status)}
+                                </div>
+                                <div className="flex-1">
+                                  <h4 className=" text-[#4A4A4A] font-semibold ">{item.title}</h4>
+                                  {/* <p className="text-gray-700 mb-2">{item.description}</p> */}
+                                  {/* <p className="text-sm text-gray-500">Next Step: {item.nextStep}</p> */}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px] pt-8">Next:</h3>
                       {sections
                         .find((s) => s.id === "summary")
-                        ?.content.statusCards.map((card: StatusCard) => (
-                          <div key={card.id} className="bg-white  overflow-hidden">
-                            <div
-                              className={`${getStatusCardColor(card.color)} text-white p-3 text-center font-semibold`}
-                            >
-                              {card.title}
-                            </div>
-                            <div className="p-4 bg-[#f8f8f8]">
-                              <p className={`${getTextColor(card.color)} text-[14px] text-center`}>
-                                {card.description}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                    {/* Overall Status */}
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px]">Overall Status:</h3>
-                    <div>
-                      {sections
-                        .find((s) => s.id === "summary")
-                        ?.content.statusItems.map((item: StatusItem) => (
+                        ?.content.nextItems.map((item: StatusItem) => (
                           <div key={item.id}>
                             <div className="flex items-center">
                               <div className="flex-shrink-0 w-10 h-10  flex items-center justify-center">
@@ -553,46 +645,59 @@ export default function WeeklyPlanBuilder() {
                           </div>
                         ))}
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px] pt-8">Next:</h3>
                   </div>
                 )}
 
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
-                  <div className="px-8 py-12 bg-gray-50">
-                    <div className="flex items-center gap-3 mb-8">
-                      <Bell className="w-6 h-6 text-blue-600" />
-                      <h2 className="text-3xl font-bold text-gray-900">Important Updates</h2>
+                  <div className=" px-8 py-12 bg-gray-50">
+                    <div className="flex items-center gap-3 mb-8 relative">
+                      <h2 className=" text-[45px] font-bold whitespace-nowrap text-start">
+                        <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
+                        <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
+                      </h2>
+                      <div className="absolute right-16">
+                        <img
+                          src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748340755/get_vectorize_image_a0quqv.png"
+                          alt=""
+                        />
+                      </div>
                     </div>
-
+                    <div className="pb-10 w-2/3">
+                      <p className="text-lg leading-[1.2] text-start text-[#4A4A4A]">
+                        {sections.find((s) => s.id === "updates")?.content.text}
+                      </p>
+                    </div>
                     <div className="space-y-6">
                       {sections
                         .find((s) => s.id === "updates")
-                        ?.content.projects.map((project: Project) => (
-                          <div key={project.id} className="bg-white rounded-lg shadow-md p-6">
-                            <div className="flex gap-6">
-                              <img
-                                src={project.imageUrl || "/placeholder.svg"}
-                                alt={project.title}
-                                className="w-24 h-20 object-cover rounded-lg flex-shrink-0"
-                              />
-                              <div className="flex-1">
-                                <div className="flex items-start justify-between mb-3">
-                                  <h3 className="text-xl font-bold text-gray-900">{project.title}</h3>
-                                  <div className="flex gap-2">
-                                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                                      {project.status}
-                                    </span>
-                                    <span className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-medium">
-                                      {project.priority}
-                                    </span>
+                        ?.content.projects.map((project: Project, index: number) => {
+                          const isEven = index % 2 === 0;
+                          const contentRadius = isEven
+                            ? " rounded-tr-[16px] rounded-br-[16px]" // Image on left, content on right
+                            : " rounded-tl-[16px] rounded-bl-[16px]"; // Image on right, content on left
+
+                          return (
+                            <div
+                              key={project.id}
+                              className={`${getStatusCardColor(project.bgColor)} rounded-[15px] shadow-md p-3`}
+                            >
+                              <div className={`flex gap-6 ${isEven ? "flex-row" : "flex-row-reverse"}`}>
+                                <img
+                                  src={project.imageUrl || "/placeholder.svg"}
+                                  alt={project.title}
+                                  className="w-1/3 h-auto object-cover rounded-lg flex-shrink-0"
+                                />
+                                <div className={`flex-1 bg-white p-6 ${contentRadius}`}>
+                                  <div className="flex items-start justify-between mb-3">
+                                    <h3 className="text-xl font-bold text-gray-900">{project.title}</h3>
                                   </div>
+                                  <p className="text-gray-700 leading-relaxed">{project.description}</p>
                                 </div>
-                                <p className="text-gray-700 leading-relaxed">{project.description}</p>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                     </div>
                   </div>
                 )}
@@ -710,9 +815,10 @@ export default function WeeklyPlanBuilder() {
               </div>
             </div>
           </div>
+          {/* ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
 
           {/* Controls Section - Takes 1 column */}
-          <div className="xl:col-span-1 space-y-4 max-h-screen overflow-y-auto">
+          <div className="xl:col-span-1 space-y-4 max-h-full overflow-y-auto">
             {/* Header Settings */}
             <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
@@ -939,12 +1045,59 @@ export default function WeeklyPlanBuilder() {
                                 </div>
                               ))}
                             </div>
+
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-gray-700">Next Items</span>
+                                <button
+                                  onClick={() => addNextItem(section.id)}
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                              {section.content.nextItems.map((item: StatusItem) => (
+                                <div key={item.id} className="border border-gray-200 rounded p-2 space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <input
+                                      type="text"
+                                      value={item.title}
+                                      onChange={(e) => updateNextItem(section.id, item.id, "title", e.target.value)}
+                                      className="flex-1 px-1 py-1 border border-gray-300 rounded text-xs"
+                                    />
+                                    <button
+                                      onClick={() => removeNextItem(section.id, item.id)}
+                                      className="text-red-600 hover:text-red-700 ml-1"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </div>
+
+                                  <select
+                                    value={item.status}
+                                    onChange={(e) => updateNextItem(section.id, item.id, "status", e.target.value)}
+                                    className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
+                                  >
+                                    <option value="completed">Completed</option>
+                                    <option value="progress">In Progress</option>
+                                    <option value="blocked">Blocked</option>
+                                  </select>
+                                </div>
+                              ))}
+                            </div>
                           </>
                         )}
 
                         {/* Important Updates Controls */}
                         {section.id === "updates" && (
                           <div className="space-y-2">
+                            <textarea
+                              value={section.content.text}
+                              onChange={(e) => updateSectionContent(section.id, "text", e.target.value)}
+                              rows={3}
+                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                              placeholder="Content text"
+                            />
                             <div className="flex items-center justify-between">
                               <span className="text-xs font-medium text-gray-700">Projects</span>
                               <button
@@ -983,22 +1136,18 @@ export default function WeeklyPlanBuilder() {
                                   className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
                                   placeholder="Image URL"
                                 />
-                                <div className="flex gap-1">
-                                  <input
-                                    type="text"
-                                    value={project.status}
-                                    onChange={(e) => updateProject(section.id, project.id, "status", e.target.value)}
-                                    className="flex-1 px-1 py-1 border border-gray-300 rounded text-xs"
-                                    placeholder="Status"
-                                  />
-                                  <input
-                                    type="text"
-                                    value={project.priority}
-                                    onChange={(e) => updateProject(section.id, project.id, "priority", e.target.value)}
-                                    className="flex-1 px-1 py-1 border border-gray-300 rounded text-xs"
-                                    placeholder="Priority"
-                                  />
-                                </div>
+                                <select
+                                  value={project.bgColor}
+                                  onChange={(e) => updateProject(section.id, project.id, "bgColor", e.target.value)}
+                                  className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
+                                >
+                                  <option value="green">Green</option>
+                                  <option value="yellow">Yellow</option>
+                                  <option value="red">Red</option>
+                                  <option value="blue">Blue</option>
+                                  <option value="purple">Purple</option>
+                                  <option value="orange">Orange</option>
+                                </select>
                               </div>
                             ))}
                           </div>
