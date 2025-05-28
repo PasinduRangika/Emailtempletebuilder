@@ -17,6 +17,11 @@ import {
   Plus,
   CalendarIcon,
 } from "lucide-react";
+import Completed from "../components/assets/icons/completed/Completed";
+import Process from "../components/assets/icons/process/Process";
+import Play from "../components/assets/icons/play/Play";
+import Dots from "../components/assets/icons/dots/Dots";
+import Point from "../components/assets/icons/point/Point";
 
 interface Section {
   id: string;
@@ -186,7 +191,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "1",
             icon: "check",
-            title: "Database Migration",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor fssdfdsfdsf",
             description: "Successfully migrated user data to new infrastructure",
             nextStep: "Monitor performance metrics",
             status: "completed",
@@ -194,7 +199,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "2",
             icon: "clock",
-            title: "Frontend QA",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor sdfgsdf",
             description: "Quality assurance testing in progress",
             nextStep: "Complete regression testing",
             status: "progress",
@@ -202,7 +207,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "3",
             icon: "warning",
-            title: "API Integration",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
             description: "Third-party API experiencing intermittent issues",
             nextStep: "Contact vendor support",
             status: "blocked",
@@ -212,7 +217,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "1",
             icon: "check",
-            title: "Database Migration",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor sdfsdfsdf",
             description: "Successfully migrated user data to new infrastructure",
             nextStep: "Monitor performance metrics",
             status: "completed",
@@ -220,7 +225,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "2",
             icon: "clock",
-            title: "Frontend QA",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
             description: "Quality assurance testing in progress",
             nextStep: "Complete regression testing",
             status: "progress",
@@ -228,7 +233,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "3",
             icon: "warning",
-            title: "API Integration",
+            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
             description: "Third-party API experiencing intermittent issues",
             nextStep: "Contact vendor support",
             status: "blocked",
@@ -537,33 +542,12 @@ export default function WeeklyPlanBuilder() {
     }
   };
 
-  // const downloadAsImage = async () => {
-  //   if (previewRef.current) {
-  //     try {
-  //       const canvas = await html2canvas(previewRef.current, {
-  //         backgroundColor: "#ffffff",
-  //         scale: 3,
-  //         useCORS: true,
-  //         height: previewRef.current.scrollHeight,
-  //         width: previewRef.current.scrollWidth,
-  //       });
-
-  //       const link = document.createElement("a");
-  //       link.download = "weekly-plan.png";
-  //       link.href = canvas.toDataURL();
-  //       link.click();
-  //     } catch (error) {
-  //       console.error("Error generating image:", error);
-  //     }
-  //   }
-  // };
-
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <CheckCircle className="w-5 h-5 text-green-600" />;
+        return <Completed />;
       case "progress":
-        return <Clock className="w-5 h-5 text-yellow-600" />;
+        return <Process />;
       case "blocked":
         return <AlertTriangle className="w-5 h-5 text-red-600" />;
       default:
@@ -792,14 +776,6 @@ export default function WeeklyPlanBuilder() {
             <div className="bg-white rounded-lg shadow-lg border border-gray-200 mb-4">
               <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-800">Email Preview</h2>
-                {/* <button
-                  onClick={downloadAsImage}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                  Download PNG
-                </button> */}
-
                 <div className="flex items-center gap-2">
                   <div className="relative" ref={dropdownRef}>
                     <button
@@ -897,14 +873,6 @@ export default function WeeklyPlanBuilder() {
                     <div className="pt-16 pb-12 px-8">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div>
-                          {/* <h2
-                            className="text-3xl font-bold mb-4"
-                            style={{
-                              color: sections.find((s) => s.id === "glance")?.styles?.textColor || "#1E40AF",
-                            }}
-                          >
-                            {sections.find((s) => s.id === "glance")?.content.heading}
-                          </h2> */}
                           <h2 className="text-[36px] font-bold mb-4">
                             {(() => {
                               const heading = sections.find((s) => s.id === "glance")?.content.heading || "";
@@ -985,15 +953,14 @@ export default function WeeklyPlanBuilder() {
                         {sections
                           .find((s) => s.id === "summary")
                           ?.content.statusItems.map((item: StatusItem) => (
-                            <div key={item.id}>
-                              <div className="flex items-center">
-                                <div className="flex-shrink-0 w-10 h-10  flex items-center justify-center">
-                                  {getStatusIcon(item.status)}
+                            <div key={item.id} className="pb-3">
+                              <div className="flex items-start gap-3">
+                                <div>
+                                  <span className="block">{getStatusIcon(item.status)}</span>
                                 </div>
+
                                 <div className="flex-1">
-                                  <h4 className=" text-[#4A4A4A] font-semibold ">{item.title}</h4>
-                                  {/* <p className="text-gray-700 mb-2">{item.description}</p> */}
-                                  {/* <p className="text-sm text-gray-500">Next Step: {item.nextStep}</p> */}
+                                  <h4 className="text-[#4A4A4A] font-semibold leading-tight">{item.title}</h4>
                                 </div>
                               </div>
                             </div>
@@ -1003,15 +970,14 @@ export default function WeeklyPlanBuilder() {
                       {sections
                         .find((s) => s.id === "summary")
                         ?.content.nextItems.map((item: StatusItem) => (
-                          <div key={item.id}>
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 w-10 h-10  flex items-center justify-center">
-                                {getStatusIcon(item.status)}
+                          <div key={item.id} className="pb-3">
+                            <div className="flex items-start gap-3 ">
+                              <div>
+                                <Point />
                               </div>
-                              <div className="flex-1">
-                                <h4 className=" text-[#4A4A4A] font-semibold ">{item.title}</h4>
-                                {/* <p className="text-gray-700 mb-2">{item.description}</p> */}
-                                {/* <p className="text-sm text-gray-500">Next Step: {item.nextStep}</p> */}
+
+                              <div className="flex-1 ">
+                                <h4 className="text-[#4A4A4A] font-semibold leading-tight">{item.title}</h4>
                               </div>
                             </div>
                           </div>
