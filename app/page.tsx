@@ -320,6 +320,8 @@ export default function WeeklyPlanBuilder() {
       title: "Segmented Overview of Updates",
       visible: true,
       content: {
+        subtitle:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
         buttons: [
           "New Customer Onboarding Updates",
           "Customer Issue Resolution Updates",
@@ -328,6 +330,18 @@ export default function WeeklyPlanBuilder() {
           "New Upgrade 2",
           "New Upgrade 3",
         ],
+      },
+      styles: {
+        backgroundColor: "#2563EB",
+        textColor: "#FFFFFF",
+      },
+    },
+    {
+      id: "Additional",
+      title: "Additional Resources",
+      visible: true,
+      content: {
+        buttons: ["New Customer Onboarding Updates", "Customer Issue Resolution Updates"],
       },
       styles: {
         backgroundColor: "#2563EB",
@@ -1141,18 +1155,27 @@ export default function WeeklyPlanBuilder() {
                 {/* Segmented Overview of Updates */}
                 {sections.find((s) => s.id === "overview")?.visible && (
                   <div className="px-8 py-12">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-8">Segmented Overview of Updates</h2>
-
+                    <div className="flex items-center justify-center my-8">
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                      <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
+                        <span className="text-[#555] leading-[0.1] text-[38px] ">Segmented Overview of</span>
+                        <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
+                      </h2>
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                    </div>
+                    <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
+                      {sections.find((s) => s.id === "overview")?.content.subtitle}
+                    </p>
                     <div className="space-y-4">
                       {sections
                         .find((s) => s.id === "overview")
                         ?.content.buttons.map((button: string, index: number) => (
                           <div
                             key={index}
-                            className="p-6 rounded-xl shadow-lg cursor-pointer transition-colors group"
+                            className="p-6 rounded-[32px]  cursor-pointer transition-colors group w-2/3 mx-auto"
                             style={{
                               backgroundColor:
-                                sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#2563EB",
+                                sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
                               color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
                             }}
                           >
@@ -1163,12 +1186,37 @@ export default function WeeklyPlanBuilder() {
                           </div>
                         ))}
                     </div>
+                    {sections.find((s) => s.id === "Additional")?.visible && (
+                      <>
+                        <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
+                          Additional Resources
+                        </div>
+                        <div className="space-y-4">
+                          {sections
+                            .find((s) => s.id === "Additional")
+                            ?.content.buttons.map((button: string, index: number) => (
+                              <div
+                                key={index}
+                                className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
+                                style={{
+                                  backgroundColor:
+                                    sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
+                                  color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
+                                }}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-lg font-semibold">{button}</span>
+                                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
-
-                {/* Footer */}
-                <div className="bg-gray-900 text-white py-8 px-8 text-center">
-                  <div className="text-2xl font-bold">{emailData.company}</div>
+                <div className=" py-8 px-8 text-center  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10">
+                  <img src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748420615/String_6_rqstyl.png" alt="" />
                 </div>
               </div>
             </div>
@@ -1719,6 +1767,13 @@ export default function WeeklyPlanBuilder() {
                         {section.id === "overview" && (
                           <>
                             <div className="space-y-2">
+                              <textarea
+                                value={section.content.subtitle}
+                                onChange={(e) => updateSectionContent(section.id, "subtitle", e.target.value)}
+                                rows={2}
+                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                placeholder="Subtitle"
+                              />
                               <div className="flex items-center justify-between">
                                 <span className="text-xs font-medium text-gray-700">Buttons</span>
                                 <button
@@ -1760,6 +1815,38 @@ export default function WeeklyPlanBuilder() {
                                 className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
                                 title="Button Text Color"
                               />
+                            </div>
+                          </>
+                        )}
+                        {/* additional Controls */}
+                        {section.id === "Additional" && (
+                          <>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-gray-700">Buttons</span>
+                                <button
+                                  onClick={() => addButton(section.id)}
+                                  className="text-blue-600 hover:text-blue-700"
+                                >
+                                  <Plus className="w-3 h-3" />
+                                </button>
+                              </div>
+                              {section.content.buttons.map((button: string, index: number) => (
+                                <div key={index} className="flex items-center gap-1">
+                                  <input
+                                    type="text"
+                                    value={button}
+                                    onChange={(e) => updateButton(section.id, index, e.target.value)}
+                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs"
+                                  />
+                                  <button
+                                    onClick={() => removeButton(section.id, index)}
+                                    className="text-red-600 hover:text-red-700"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
                             </div>
                           </>
                         )}
