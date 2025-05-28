@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import html2canvas from "html2canvas";
 import {
   Download,
@@ -355,6 +355,10 @@ export default function WeeklyPlanBuilder() {
     holidayType: "" as "company" | "national" | "",
   });
 
+  // Add state for dropdown
+  const [isDownloadDropdownOpen, setIsDownloadDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const previewRef = useRef<HTMLDivElement>(null);
 
   const toggleSection = (sectionId: string) => {
@@ -533,26 +537,26 @@ export default function WeeklyPlanBuilder() {
     }
   };
 
-  const downloadAsImage = async () => {
-    if (previewRef.current) {
-      try {
-        const canvas = await html2canvas(previewRef.current, {
-          backgroundColor: "#ffffff",
-          scale: 3,
-          useCORS: true,
-          height: previewRef.current.scrollHeight,
-          width: previewRef.current.scrollWidth,
-        });
+  // const downloadAsImage = async () => {
+  //   if (previewRef.current) {
+  //     try {
+  //       const canvas = await html2canvas(previewRef.current, {
+  //         backgroundColor: "#ffffff",
+  //         scale: 3,
+  //         useCORS: true,
+  //         height: previewRef.current.scrollHeight,
+  //         width: previewRef.current.scrollWidth,
+  //       });
 
-        const link = document.createElement("a");
-        link.download = "weekly-plan.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      } catch (error) {
-        console.error("Error generating image:", error);
-      }
-    }
-  };
+  //       const link = document.createElement("a");
+  //       link.download = "weekly-plan.png";
+  //       link.href = canvas.toDataURL();
+  //       link.click();
+  //     } catch (error) {
+  //       console.error("Error generating image:", error);
+  //     }
+  //   }
+  // };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -723,6 +727,57 @@ export default function WeeklyPlanBuilder() {
     return dates.sort((a, b) => a - b).join(", ");
   };
 
+  const downloadSectionAsImage = async (sectionId: string) => {
+    const sectionElement = document.getElementById(`section-${sectionId}`);
+    console.log(sectionElement);
+    if (sectionElement) {
+      try {
+        const canvas = await html2canvas(sectionElement, {
+          backgroundColor: "#ffffff",
+          scale: 2,
+          useCORS: true,
+          height: sectionElement.scrollHeight,
+          width: sectionElement.scrollWidth,
+        });
+
+        const link = document.createElement("a");
+        const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
+        link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      } catch (error) {
+        console.error("Error generating section image:", error);
+      }
+    }
+  };
+
+  const downloadAllSections = async () => {
+    const visibleSections = sections.filter((section) => section.visible);
+
+    for (const section of visibleSections) {
+      await downloadSectionAsImage(section.id);
+      // Add a small delay between downloads to prevent browser issues
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
+  };
+
+  // Add click outside handler to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDownloadDropdownOpen(false);
+      }
+    };
+
+    if (isDownloadDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isDownloadDropdownOpen]);
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto p-6">
@@ -737,18 +792,87 @@ export default function WeeklyPlanBuilder() {
             <div className="bg-white rounded-lg shadow-lg border border-gray-200 mb-4">
               <div className="flex items-center justify-between p-4 border-b border-gray-200">
                 <h2 className="text-lg font-semibold text-gray-800">Email Preview</h2>
-                <button
+                {/* <button
                   onClick={downloadAsImage}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   Download PNG
-                </button>
+                </button> */}
+
+                <div className="flex items-center gap-2">
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      onClick={() => setIsDownloadDropdownOpen(!isDownloadDropdownOpen)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Sections
+                      <svg
+                        className={`w-4 h-4 transition-transform ${isDownloadDropdownOpen ? "rotate-180" : ""}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    {isDownloadDropdownOpen && (
+                      <div className="absolute right-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
+                        <div className="p-2 flex flex-col">
+                          <button
+                            onClick={() => {
+                              downloadAllSections();
+                              setIsDownloadDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded flex items-center gap-2"
+                          >
+                            <Download className="w-3 h-3" />
+                            Download All Sections
+                          </button>
+                          <hr className="my-1" />
+                          <button
+                            onClick={() => {
+                              downloadSectionAsImage("header");
+                              setIsDownloadDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                          >
+                            Header
+                          </button>
+                          {sections
+                            .filter((section) => section.visible)
+                            .map((section) => (
+                              <button
+                                key={section.id}
+                                onClick={() => {
+                                  downloadSectionAsImage(section.id);
+                                  setIsDownloadDropdownOpen(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                              >
+                                {section.title}
+                              </button>
+                            ))}
+                          <button
+                            onClick={() => {
+                              downloadSectionAsImage("footer");
+                              setIsDownloadDropdownOpen(false);
+                            }}
+                            className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded"
+                          >
+                            Footer
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Email Template Preview */}
               <div ref={previewRef} className="bg-white overflow-hidden" style={{ width: "800px", margin: "0 auto" }}>
-                <div className="relative h-[550px] bg-gradient-to-r overflow-hidden">
+                <div id="section-header" className="relative h-[550px] bg-gradient-to-r overflow-hidden">
                   <div
                     className="relative bg-contain bg-center bg-no-repeat h-full w-full"
                     style={{
@@ -768,7 +892,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* This Week at a Glance */}
                 {sections.find((s) => s.id === "glance")?.visible && (
-                  <div className="relative">
+                  <div id="section-glance" className="relative">
                     <div className="absolute top-0 left-0 w-full overflow-hidden leading-none"></div>
                     <div className="pt-16 pb-12 px-8">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -818,7 +942,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Executive Summary */}
                 {sections.find((s) => s.id === "summary")?.visible && (
-                  <div className="px-8 py-12">
+                  <div id="section-summary" className="px-8 py-12">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -898,7 +1022,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
-                  <div className=" px-8 py-12 ">
+                  <div id="section-updates" className=" px-8 py-12 ">
                     <div className="flex items-center gap-3 mb-8 relative">
                       <h2 className=" text-[45px] font-bold whitespace-nowrap text-start">
                         <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
@@ -952,7 +1076,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Planned Tasks & Milestone */}
                 {sections.find((s) => s.id === "milestones")?.visible && (
-                  <div className="px-8 py-12">
+                  <div id="section-milestones" className="px-8 py-12">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -1030,7 +1154,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Time-Off Schedule */}
                 {sections.find((s) => s.id === "schedule")?.visible && (
-                  <div>
+                  <div id="section-schedule">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -1154,7 +1278,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Segmented Overview of Updates */}
                 {sections.find((s) => s.id === "overview")?.visible && (
-                  <div className="px-8 py-12">
+                  <div id="section-overview" className="px-8 py-12">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -1215,7 +1339,10 @@ export default function WeeklyPlanBuilder() {
                     )}
                   </div>
                 )}
-                <div className=" py-8 px-8 text-center  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10">
+                <div
+                  id="section-footer"
+                  className=" py-8 px-8 text-center  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10"
+                >
                   <img src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748420615/String_6_rqstyl.png" alt="" />
                 </div>
               </div>
