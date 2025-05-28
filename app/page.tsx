@@ -8,7 +8,6 @@ import {
   EyeOff,
   Settings,
   Layout,
-  Bell,
   ArrowRight,
   CheckCircle,
   Clock,
@@ -16,6 +15,7 @@ import {
   Target,
   X,
   Plus,
+  CalendarIcon,
 } from "lucide-react";
 
 interface Section {
@@ -54,6 +54,97 @@ interface Project {
   priority: string;
   imageUrl?: string;
   bgColor: string;
+}
+
+interface DatePickerProps {
+  isOpen: boolean;
+  onClose: () => void;
+  selectedDates: number[];
+  onDateSelect: (date: number) => void;
+  month: string;
+  year: number;
+}
+
+// Calendar date picker component
+function DatePicker({ isOpen, onClose, selectedDates, onDateSelect, month, year }: DatePickerProps) {
+  if (!isOpen) return null;
+
+  const monthIndex = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ].indexOf(month);
+
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const firstDay = new Date(year, monthIndex, 1).getDay();
+
+  // Create array of days
+  const days = [];
+
+  // Add empty cells for days before the first day of the month
+  for (let i = 0; i < firstDay; i++) {
+    days.push(<div key={`empty-${i}`} className="w-8 h-8"></div>);
+  }
+
+  // Add days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    const isSelected = selectedDates.includes(day);
+
+    days.push(
+      <div
+        key={day}
+        onClick={() => onDateSelect(day)}
+        className={`w-8 h-8 flex items-center justify-center text-sm rounded-full cursor-pointer 
+          ${isSelected ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+      >
+        {day}
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl p-4 w-72">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-medium">Select Dates</h3>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="mb-4 text-center font-medium">
+          {month} {year}
+        </div>
+
+        {/* Days of week */}
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+            <div key={day} className="w-8 h-8 flex items-center justify-center text-xs font-medium text-gray-500">
+              {day}
+            </div>
+          ))}
+        </div>
+
+        {/* Calendar days */}
+        <div className="grid grid-cols-7 gap-1">{days}</div>
+
+        <div className="mt-4 flex justify-end">
+          <button onClick={onClose} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function WeeklyPlanBuilder() {
@@ -211,6 +302,13 @@ export default function WeeklyPlanBuilder() {
         backgroundImage: "/placeholder.svg?height=200&width=800",
         useCustomImage: false,
         overlayText: "Schedule Grid Placeholder",
+        // Add calendar-specific content
+        month: "June",
+        year: 2025,
+        selectedDates: [10], // Array of selected dates
+        companyHolidays: [15, 25], // Array of company holiday dates
+        nationalHolidays: [10, 20], // Array of national holiday dates
+        useCalendarView: true, // Toggle between calendar and placeholder
       },
       styles: {
         backgroundColor: "#F3F4F6",
@@ -237,6 +335,11 @@ export default function WeeklyPlanBuilder() {
       },
     },
   ]);
+  // State for date picker
+  const [datePickerState, setDatePickerState] = useState({
+    isOpen: false,
+    holidayType: "" as "company" | "national" | "",
+  });
 
   const previewRef = useRef<HTMLDivElement>(null);
 
@@ -474,7 +577,137 @@ export default function WeeklyPlanBuilder() {
     return colors[color as keyof typeof colors] || colors.blue;
   };
 
-  const backgroundImg = "url('https://codimite.flywheelstaging.com/wp-content/uploads/Hero-BG-5.jpg')";
+  const getDaysInMonth = (month: number, year: number) => {
+    return new Date(year, month, 0).getDate();
+  };
+
+  const getFirstDayOfMonth = (month: number, year: number) => {
+    return new Date(year, month - 1, 1).getDay();
+  };
+
+  const getMonthName = (monthIndex: number) => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return months[monthIndex - 1];
+  };
+
+  const renderCalendar = (section: any) => {
+    const monthIndex =
+      [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ].indexOf(section.content.month) + 1;
+
+    const daysInMonth = getDaysInMonth(monthIndex, section.content.year);
+    const firstDay = getFirstDayOfMonth(monthIndex, section.content.year);
+    const days = [];
+
+    // Add empty cells for days before the first day of the month
+    for (let i = 0; i < firstDay; i++) {
+      days.push(<div key={`empty-${i}`} className="w-10 h-10"></div>);
+    }
+
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isCompanyHoliday = section.content.companyHolidays?.includes(day);
+      const isNationalHoliday = section.content.nationalHolidays?.includes(day);
+
+      let dayClass =
+        "w-10 h-10 flex items-center justify-center text-sm font-medium rounded-lg cursor-pointer hover:bg-gray-100 transition-colors";
+
+      if (isNationalHoliday) {
+        dayClass += " bg-red-500 text-white";
+      } else if (isCompanyHoliday) {
+        dayClass += " bg-gray-800 text-white";
+      } else {
+        dayClass += " text-gray-700";
+      }
+
+      days.push(
+        <div key={day} className={dayClass}>
+          {day}
+        </div>
+      );
+    }
+
+    return days;
+  };
+
+  // Handle date selection in the date picker
+  const handleDateSelect = (date: number) => {
+    if (!datePickerState.holidayType || !datePickerState.isOpen) return;
+
+    const scheduleSection = sections.find((s) => s.id === "schedule");
+    if (!scheduleSection) return;
+
+    const holidayType = datePickerState.holidayType;
+    const currentHolidays = [...(scheduleSection.content[`${holidayType}Holidays`] || [])];
+
+    // Toggle the date (add if not present, remove if present)
+    const dateIndex = currentHolidays.indexOf(date);
+    if (dateIndex === -1) {
+      currentHolidays.push(date);
+    } else {
+      currentHolidays.splice(dateIndex, 1);
+    }
+
+    // Sort the dates for better display
+    currentHolidays.sort((a, b) => a - b);
+
+    updateSectionContent("schedule", `${holidayType}Holidays`, currentHolidays);
+  };
+
+  // Open date picker for specific holiday type
+  const openDatePicker = (holidayType: "company" | "national") => {
+    setDatePickerState({
+      isOpen: true,
+      holidayType,
+    });
+  };
+
+  // Close date picker
+  const closeDatePicker = () => {
+    setDatePickerState({
+      isOpen: false,
+      holidayType: "",
+    });
+  };
+
+  // Get selected dates based on current holiday type
+  const getSelectedDates = () => {
+    const scheduleSection = sections.find((s) => s.id === "schedule");
+    if (!scheduleSection || !datePickerState.holidayType) return [];
+
+    return scheduleSection.content[`${datePickerState.holidayType}Holidays`] || [];
+  };
+
+  // Format dates for display
+  const formatDates = (dates: number[]) => {
+    if (!dates || dates.length === 0) return "None selected";
+    return dates.sort((a, b) => a - b).join(", ");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -783,38 +1016,125 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Time-Off Schedule */}
                 {sections.find((s) => s.id === "schedule")?.visible && (
-                  <div className="px-8 py-12 bg-gray-50">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Time-Off Schedule</h2>
-                    <p className="text-gray-600 mb-6">{sections.find((s) => s.id === "schedule")?.content.subtitle}</p>
-
-                    <div className="relative h-48 rounded-lg overflow-hidden">
-                      {sections.find((s) => s.id === "schedule")?.content.useCustomImage ? (
-                        <img
-                          src={sections.find((s) => s.id === "schedule")?.content.backgroundImage || "/placeholder.svg"}
-                          alt="Schedule Background"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div
-                          className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
-                          style={{
-                            backgroundColor:
-                              sections.find((s) => s.id === "schedule")?.styles?.backgroundColor || "#F3F4F6",
-                            backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
-                            backgroundSize: "20px 20px",
-                          }}
-                        >
-                          <p
-                            className="font-medium"
-                            style={{
-                              color: sections.find((s) => s.id === "schedule")?.styles?.textColor || "#6B7280",
-                            }}
-                          >
-                            {sections.find((s) => s.id === "schedule")?.content.overlayText}
-                          </p>
-                        </div>
-                      )}
+                  <div>
+                    <div className="flex items-center justify-center my-8">
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                      <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
+                        <span className="text-[#555] leading-[0.1] text-[38px] ">Time-Off</span>
+                        <span className="text-[#000] block text-[58px] leading-[0.8]">Schedule</span>
+                      </h2>
+                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                     </div>
+                    <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
+                      {sections.find((s) => s.id === "schedule")?.content.subtitle}
+                    </p>
+                    {sections.find((s) => s.id === "schedule")?.content.useCalendarView ? (
+                      // Calendar View
+                      <div className="bg-white rounded-2xl   p-8 max-w-4xl mx-auto">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-8">
+                          <div className="flex items-center gap-4">
+                            <div className="text-2xl font-bold text-blue-600">{emailData.company}</div>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-2  items-start">
+                          {/* Left Side - Month Info */}
+
+                          <div className="flex flex-col justify-between h-full">
+                            <div className="space-y-6">
+                              <h2 className="text-4xl font-bold text-gray-900 mb-8">Time-Off</h2>
+                              <div className="flex items-center gap-3">
+                                <div className="w-0 h-0 border-l-8 border-l-blue-600 border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+                                <span className="text-lg font-medium text-gray-700">
+                                  Month: {sections.find((s) => s.id === "schedule")?.content.month}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Legend */}
+                            <div className="space-y-4">
+                              <h3 className="text-lg font-semibold text-gray-900">Out Of Office (OOO)</h3>
+                              <div className="space-y-2">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-4 h-4 bg-gray-800 rounded"></div>
+                                  <span className="text-sm text-gray-600">Company Holidays</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                  <div className="w-4 h-4 bg-red-500 rounded"></div>
+                                  <span className="text-sm text-gray-600">National Holidays in Sri Lanka</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Right Side - Calendar */}
+                          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                            {/* Calendar Header */}
+                            <div className="bg-blue-600 text-white p-4 text-center">
+                              <h3 className="text-lg font-semibold">
+                                {sections.find((s) => s.id === "schedule")?.content.month}{" "}
+                                {sections.find((s) => s.id === "schedule")?.content.year}
+                              </h3>
+                            </div>
+
+                            {/* Calendar Grid */}
+                            <div className="p-4">
+                              {/* Days of Week */}
+                              <div className="grid grid-cols-7 gap-1 mb-2">
+                                {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+                                  <div
+                                    key={day}
+                                    className="w-10 h-8 flex items-center justify-center text-xs font-medium text-gray-500"
+                                  >
+                                    {day}
+                                  </div>
+                                ))}
+                              </div>
+
+                              {/* Calendar Days */}
+                              <div className="grid grid-cols-7 gap-1">
+                                {renderCalendar(sections.find((s) => s.id === "schedule"))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      // Original Placeholder View
+                      <div>
+                        <div className="relative h-48 rounded-lg overflow-hidden">
+                          {sections.find((s) => s.id === "schedule")?.content.useCustomImage ? (
+                            <img
+                              src={
+                                sections.find((s) => s.id === "schedule")?.content.backgroundImage || "/placeholder.svg"
+                              }
+                              alt="Schedule Background"
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
+                              style={{
+                                backgroundColor:
+                                  sections.find((s) => s.id === "schedule")?.styles?.backgroundColor || "#F3F4F6",
+                                backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                                backgroundSize: "20px 20px",
+                              }}
+                            >
+                              <p
+                                className="font-medium"
+                                style={{
+                                  color: sections.find((s) => s.id === "schedule")?.styles?.textColor || "#6B7280",
+                                }}
+                              >
+                                {sections.find((s) => s.id === "schedule")?.content.overlayText}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -951,22 +1271,6 @@ export default function WeeklyPlanBuilder() {
                               className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                               placeholder="Sticky notes image URL"
                             />
-                            {/* <div className="flex gap-2">
-                              <input
-                                type="color"
-                                value={section.styles?.backgroundColor || "#ffffff"}
-                                onChange={(e) => updateSectionStyles(section.id, { backgroundColor: e.target.value })}
-                                className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
-                                title="Background Color"
-                              />
-                              <input
-                                type="color"
-                                value={section.styles?.textColor || "#1E40AF"}
-                                onChange={(e) => updateSectionStyles(section.id, { textColor: e.target.value })}
-                                className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
-                                title="Text Color"
-                              />
-                            </div> */}
                           </>
                         )}
 
@@ -1056,21 +1360,7 @@ export default function WeeklyPlanBuilder() {
                                       <X className="w-3 h-3" />
                                     </button>
                                   </div>
-                                  {/* <textarea
-                                    value={item.description}
-                                    onChange={(e) =>
-                                      updateStatusItem(section.id, item.id, "description", e.target.value)
-                                    }
-                                    rows={2}
-                                    className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
-                                  />
-                                  <input
-                                    type="text"
-                                    value={item.nextStep}
-                                    onChange={(e) => updateStatusItem(section.id, item.id, "nextStep", e.target.value)}
-                                    className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
-                                    placeholder="Next step"
-                                  /> */}
+
                                   <select
                                     value={item.status}
                                     onChange={(e) => updateStatusItem(section.id, item.id, "status", e.target.value)}
@@ -1194,68 +1484,237 @@ export default function WeeklyPlanBuilder() {
                         {/* Milestones and Schedule Controls */}
                         {(section.id === "milestones" || section.id === "schedule") && (
                           <>
-                            <textarea
-                              value={section.content.subtitle}
-                              onChange={(e) => updateSectionContent(section.id, "subtitle", e.target.value)}
-                              rows={2}
-                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                              placeholder="Subtitle"
-                            />
-                            <input
-                              type="text"
-                              value={section.content.overlayText}
-                              onChange={(e) => updateSectionContent(section.id, "overlayText", e.target.value)}
-                              className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                              placeholder="Overlay text"
-                            />
-                            <div className="flex items-center gap-2">
-                              <input
-                                type="checkbox"
-                                checked={section.content.useCustomImage}
-                                onChange={(e) => updateSectionContent(section.id, "useCustomImage", e.target.checked)}
-                                className="w-3 h-3"
-                              />
-                              <span className="text-xs text-gray-700">Use custom image</span>
-                            </div>
-                            {section.content.useCustomImage && (
-                              <input
-                                type="text"
-                                value={section.content.backgroundImage}
-                                onChange={(e) => updateSectionContent(section.id, "backgroundImage", e.target.value)}
-                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                                placeholder="Background image URL"
-                              />
+                            {section.id === "schedule" && (
+                              <>
+                                <textarea
+                                  value={section.content.subtitle}
+                                  onChange={(e) => updateSectionContent(section.id, "subtitle", e.target.value)}
+                                  rows={2}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Subtitle"
+                                />
+                                <div className="flex items-center gap-2 mb-3">
+                                  <input
+                                    type="checkbox"
+                                    checked={section.content.useCalendarView}
+                                    onChange={(e) =>
+                                      updateSectionContent(section.id, "useCalendarView", e.target.checked)
+                                    }
+                                    className="w-3 h-3"
+                                  />
+                                  <span className="text-xs text-gray-700">Use calendar view</span>
+                                </div>
+
+                                {section.content.useCalendarView ? (
+                                  // Calendar Controls
+                                  <div className="space-y-2">
+                                    <div className="flex gap-2">
+                                      <select
+                                        value={section.content.month}
+                                        onChange={(e) => updateSectionContent(section.id, "month", e.target.value)}
+                                        className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs"
+                                      >
+                                        {[
+                                          "January",
+                                          "February",
+                                          "March",
+                                          "April",
+                                          "May",
+                                          "June",
+                                          "July",
+                                          "August",
+                                          "September",
+                                          "October",
+                                          "November",
+                                          "December",
+                                        ].map((month) => (
+                                          <option key={month} value={month}>
+                                            {month}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <input
+                                        type="number"
+                                        value={section.content.year}
+                                        onChange={(e) =>
+                                          updateSectionContent(section.id, "year", Number.parseInt(e.target.value))
+                                        }
+                                        className="w-16 px-2 py-1 border border-gray-300 rounded text-xs"
+                                        min="2020"
+                                        max="2030"
+                                      />
+                                    </div>
+
+                                    {/* Company Holidays */}
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        Company Holidays
+                                      </label>
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50">
+                                          {formatDates(section.content.companyHolidays || [])}
+                                        </div>
+                                        <button
+                                          onClick={() => openDatePicker("company")}
+                                          className="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"
+                                          title="Select dates"
+                                        >
+                                          <CalendarIcon className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    </div>
+
+                                    {/* National Holidays */}
+                                    <div>
+                                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                                        National Holidays
+                                      </label>
+                                      <div className="flex items-center gap-2">
+                                        <div className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50">
+                                          {formatDates(section.content.nationalHolidays || [])}
+                                        </div>
+                                        <button
+                                          onClick={() => openDatePicker("national")}
+                                          className="flex items-center justify-center w-6 h-6 bg-blue-100 text-blue-600 rounded hover:bg-blue-200"
+                                          title="Select dates"
+                                        >
+                                          <CalendarIcon className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  // Original Controls
+                                  <>
+                                    <input
+                                      type="text"
+                                      value={section.content.overlayText}
+                                      onChange={(e) => updateSectionContent(section.id, "overlayText", e.target.value)}
+                                      className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                      placeholder="Overlay text"
+                                    />
+                                    <div className="flex items-center gap-2">
+                                      <input
+                                        type="checkbox"
+                                        checked={section.content.useCustomImage}
+                                        onChange={(e) =>
+                                          updateSectionContent(section.id, "useCustomImage", e.target.checked)
+                                        }
+                                        className="w-3 h-3"
+                                      />
+                                      <span className="text-xs text-gray-700">Use custom image</span>
+                                    </div>
+                                    {section.content.useCustomImage && (
+                                      <input
+                                        type="text"
+                                        value={section.content.backgroundImage}
+                                        onChange={(e) =>
+                                          updateSectionContent(section.id, "backgroundImage", e.target.value)
+                                        }
+                                        className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                        placeholder="Background image URL"
+                                      />
+                                    )}
+                                    {!section.content.useCustomImage && (
+                                      <div className="flex gap-2">
+                                        <input
+                                          type="color"
+                                          value={section.styles?.backgroundColor || "#F3F4F6"}
+                                          onChange={(e) =>
+                                            updateSectionStyles(section.id, { backgroundColor: e.target.value })
+                                          }
+                                          className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                                          title="Background Color"
+                                        />
+                                        <input
+                                          type="color"
+                                          value={section.styles?.textColor || "#6B7280"}
+                                          onChange={(e) =>
+                                            updateSectionStyles(section.id, { textColor: e.target.value })
+                                          }
+                                          className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                                          title="Text Color"
+                                        />
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+                              </>
                             )}
-                            {section.content.useCustomImage && (
-                              <input
-                                type="text"
-                                value={section.content.backgroundImage2}
-                                onChange={(e) => updateSectionContent(section.id, "backgroundImage2", e.target.value)}
-                                className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
-                                placeholder="Background image URL"
-                              />
-                            )}
-                            {!section.content.useCustomImage && (
-                              <div className="flex gap-2">
-                                <input
-                                  type="color"
-                                  value={section.styles?.backgroundColor || "#F3F4F6"}
-                                  onChange={(e) => updateSectionStyles(section.id, { backgroundColor: e.target.value })}
-                                  className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
-                                  title="Background Color"
+
+                            {section.id === "milestones" && (
+                              <>
+                                <textarea
+                                  value={section.content.subtitle}
+                                  onChange={(e) => updateSectionContent(section.id, "subtitle", e.target.value)}
+                                  rows={2}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Subtitle"
                                 />
                                 <input
-                                  type="color"
-                                  value={section.styles?.textColor || "#6B7280"}
-                                  onChange={(e) => updateSectionStyles(section.id, { textColor: e.target.value })}
-                                  className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
-                                  title="Text Color"
+                                  type="text"
+                                  value={section.content.overlayText}
+                                  onChange={(e) => updateSectionContent(section.id, "overlayText", e.target.value)}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Overlay text"
                                 />
-                              </div>
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={section.content.useCustomImage}
+                                    onChange={(e) =>
+                                      updateSectionContent(section.id, "useCustomImage", e.target.checked)
+                                    }
+                                    className="w-3 h-3"
+                                  />
+                                  <span className="text-xs text-gray-700">Use custom image</span>
+                                </div>
+                                {section.content.useCustomImage && (
+                                  <input
+                                    type="text"
+                                    value={section.content.backgroundImage}
+                                    onChange={(e) =>
+                                      updateSectionContent(section.id, "backgroundImage", e.target.value)
+                                    }
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                    placeholder="Background image URL"
+                                  />
+                                )}
+                                {section.content.useCustomImage && (
+                                  <input
+                                    type="text"
+                                    value={section.content.backgroundImage2}
+                                    onChange={(e) =>
+                                      updateSectionContent(section.id, "backgroundImage2", e.target.value)
+                                    }
+                                    className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                    placeholder="Background image URL"
+                                  />
+                                )}
+                                {!section.content.useCustomImage && (
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="color"
+                                      value={section.styles?.backgroundColor || "#F3F4F6"}
+                                      onChange={(e) =>
+                                        updateSectionStyles(section.id, { backgroundColor: e.target.value })
+                                      }
+                                      className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                                      title="Background Color"
+                                    />
+                                    <input
+                                      type="color"
+                                      value={section.styles?.textColor || "#6B7280"}
+                                      onChange={(e) => updateSectionStyles(section.id, { textColor: e.target.value })}
+                                      className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                                      title="Text Color"
+                                    />
+                                  </div>
+                                )}
+                              </>
                             )}
                           </>
                         )}
-
                         {/* Overview Controls */}
                         {section.id === "overview" && (
                           <>
@@ -1310,6 +1769,15 @@ export default function WeeklyPlanBuilder() {
                 ))}
               </div>
             </div>
+            {/* Date Picker Modal */}
+            <DatePicker
+              isOpen={datePickerState.isOpen}
+              onClose={closeDatePicker}
+              selectedDates={getSelectedDates()}
+              onDateSelect={handleDateSelect}
+              month={sections.find((s) => s.id === "schedule")?.content.month || "January"}
+              year={sections.find((s) => s.id === "schedule")?.content.year || 2025}
+            />
           </div>
         </div>
       </div>
