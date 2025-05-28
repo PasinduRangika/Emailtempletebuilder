@@ -22,6 +22,7 @@ import Process from "../components/assets/icons/process/Process";
 import Play from "../components/assets/icons/play/Play";
 import Dots from "../components/assets/icons/dots/Dots";
 import Point from "../components/assets/icons/point/Point";
+import BgLine from "../components/assets/icons/bgline/Bgline";
 
 interface Section {
   id: string;
@@ -182,9 +183,9 @@ export default function WeeklyPlanBuilder() {
       visible: true,
       content: {
         statusCards: [
-          { id: "1", title: "On Track", color: "green", description: "Projects proceeding as planned" },
-          { id: "2", title: "Needs Attention", color: "yellow", description: "Requires monitoring" },
-          { id: "3", title: "Blocked", color: "red", description: "Issues need resolution" },
+          { id: "1", title: "Overall project", color: "green", description: "mainly on-track" },
+          { id: "2", title: "Timeline", color: "yellow", description: "on-schedule" },
+          { id: "3", title: "Issues/Risks", color: "red", description: "no issues" },
         ],
         text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
         statusItems: [
@@ -919,14 +920,28 @@ export default function WeeklyPlanBuilder() {
                       </h2>
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                     </div>
-                    <div className="pb-8">
+                    <div className="pb-20">
                       <p className="text-xl leading-[1.2] text-center text-[#4A4A4A]">
                         {sections.find((s) => s.id === "summary")?.content.text}
                       </p>
                     </div>
                     <div className="border-t border-[#DDD] p-10 mb-8 rounded-xl" style={{ borderWidth: "2px" }}>
-                      <div className=" bg-[#0084EE] p-4 mb-4 rounded-t-xl items-center d-flex">
-                        <h2 className="text-[#fff] font-bold">STATUS UPDATE</h2>
+                      <div className="flex justify-between items-center pb-12">
+                        <div>
+                          <img
+                            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748420615/String_6_rqstyl.png"
+                            alt=""
+                          />
+                        </div>
+                        <div>
+                          <Dots />
+                        </div>
+                      </div>
+                      <div>
+                        <h2 className="text-[#000] text-[30px] font-bold pb-5">Executive Summary</h2>
+                      </div>
+                      <div className=" bg-[#0084EE] p-4 mb-2 rounded-t-xl items-center d-flex">
+                        <h2 className="text-[#fff] font-bold uppercase  tracking-wider">Status update</h2>
                       </div>
 
                       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -940,7 +955,9 @@ export default function WeeklyPlanBuilder() {
                                 {card.title}
                               </div>
                               <div className="p-4 bg-[#f8f8f8]">
-                                <p className={`${getTextColor(card.color)} text-[12px] text-center`}>
+                                <p
+                                  className={`${getTextColor(card.color)} text-[14px] text-center uppercase font-bold`}
+                                >
                                   {card.description}
                                 </p>
                               </div>
@@ -948,36 +965,43 @@ export default function WeeklyPlanBuilder() {
                           ))}
                       </div>
                       {/* Overall Status */}
-                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px]">Overall Status:</h3>
+                      <div className="flex gap-4 mb-4">
+                        <Play />
+                        <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px]">Overall Status:</h3>
+                      </div>
+
                       <div>
                         {sections
                           .find((s) => s.id === "summary")
                           ?.content.statusItems.map((item: StatusItem) => (
-                            <div key={item.id} className="pb-3">
+                            <div key={item.id} className="pb-3 ml-9">
                               <div className="flex items-start gap-3">
                                 <div>
                                   <span className="block">{getStatusIcon(item.status)}</span>
                                 </div>
 
                                 <div className="flex-1">
-                                  <h4 className="text-[#4A4A4A] font-semibold leading-tight">{item.title}</h4>
+                                  <h4 className="text-[#4A4A4A]  leading-tight">{item.title}</h4>
                                 </div>
                               </div>
                             </div>
                           ))}
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px] pt-8">Next:</h3>
+                      <div className="flex gap-4 mb-4 pt-8">
+                        <Play />
+                        <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px] ">Next:</h3>
+                      </div>
                       {sections
                         .find((s) => s.id === "summary")
                         ?.content.nextItems.map((item: StatusItem) => (
-                          <div key={item.id} className="pb-3">
+                          <div key={item.id} className="pb-3 ml-9">
                             <div className="flex items-start gap-3 ">
                               <div>
                                 <Point />
                               </div>
 
                               <div className="flex-1 ">
-                                <h4 className="text-[#4A4A4A] font-semibold leading-tight">{item.title}</h4>
+                                <h4 className="text-[#4A4A4A]  leading-tight">{item.title}</h4>
                               </div>
                             </div>
                           </div>
@@ -989,7 +1013,9 @@ export default function WeeklyPlanBuilder() {
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
                   <div id="section-updates" className=" px-8 py-12 ">
-                    <div className="flex items-center gap-3 mb-8 relative">
+                    <div className=" flex items-center gap-3 mb-8 relative">
+                      <div className="abosulte bg-black z-[-1]"></div>
+
                       <h2 className=" text-[45px] font-bold whitespace-nowrap text-start">
                         <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
                         <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>

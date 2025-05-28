@@ -8,7 +8,7 @@ type IconProps = {
 
 const Dots = ({ fill, stroke, width = "28px", height = "28px", onClick }: IconProps) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="93" height="36" viewBox="0 0 93 36" fill="none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="46.5" height="18" viewBox="0 0 93 36" fill="none">
       <circle cx="1.5" cy="1.5" r="1.5" fill="#2087FD" />
       <circle cx="31.5" cy="1.5" r="1.5" fill="#2087FD" />
       <circle cx="76.5" cy="1.5" r="1.5" fill="#2087FD" />

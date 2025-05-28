@@ -11,7 +11,7 @@ const Point = ({ fill, stroke, width = "28px", height = "28px", onClick }: IconP
     <svg
       width="12"
       height="12"
-      className="block align-top mt-[2px]"
+      className="block align-top mt-[2.3px]"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
     >
