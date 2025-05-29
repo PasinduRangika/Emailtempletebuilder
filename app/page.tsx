@@ -22,7 +22,8 @@ import Process from "../components/assets/icons/process/Process";
 import Play from "../components/assets/icons/play/Play";
 import Dots from "../components/assets/icons/dots/Dots";
 import Point from "../components/assets/icons/point/Point";
-import BgLine from "../components/assets/icons/bgline/Bgline";
+import BgLine from "../components/assets/icons/bgline/BgLine";
+import domtoimage from "dom-to-image-more";
 
 interface Section {
   id: string;
@@ -338,7 +339,7 @@ export default function WeeklyPlanBuilder() {
         ],
       },
       styles: {
-        backgroundColor: "#2563EB",
+        backgroundColor: "#0084EE",
         textColor: "#FFFFFF",
       },
     },
@@ -350,7 +351,7 @@ export default function WeeklyPlanBuilder() {
         buttons: ["New Customer Onboarding Updates", "Customer Issue Resolution Updates"],
       },
       styles: {
-        backgroundColor: "#2563EB",
+        backgroundColor: "#0084EE",
         textColor: "#FFFFFF",
       },
     },
@@ -546,11 +547,29 @@ export default function WeeklyPlanBuilder() {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "completed":
-        return <Completed />;
+        return (
+          <img
+            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748502548/weui_done2-filled_1_bueh2z.png"
+            alt="Completed"
+            className="w-[20px] h-[auto]"
+          />
+        );
       case "progress":
-        return <Process />;
+        return (
+          <img
+            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748502548/Union_2_hu8dqh.png"
+            alt="In Progress"
+            className="w-[17px] h-[auto]"
+          />
+        );
       case "blocked":
-        return <AlertTriangle className="w-5 h-5 text-red-600" />;
+        return (
+          <img
+            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748503181/issuseicon_hggv4a.png"
+            alt="In Progress"
+            className="w-[17px] h-[auto]"
+          />
+        );
       default:
         return <Target className="w-5 h-5 text-blue-600" />;
     }
@@ -712,27 +731,113 @@ export default function WeeklyPlanBuilder() {
     return dates.sort((a, b) => a - b).join(", ");
   };
 
+  // const downloadSectionAsImage = async (sectionId: string) => {
+  //   const sectionElement = document.getElementById(`section-${sectionId}`);
+  //   if (sectionElement) {
+  //     try {
+  //       const canvas = await html2canvas(sectionElement, {
+  //         backgroundColor: "#ffffff",
+  //         scale: 2,
+  //         useCORS: true,
+  //         height: sectionElement.scrollHeight,
+  //         width: sectionElement.scrollWidth,
+  //       });
+
+  //       const link = document.createElement("a");
+  //       const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
+  //       link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
+  //       link.href = canvas.toDataURL();
+  //       link.click();
+  //     } catch (error) {
+  //       console.error("Error generating section image:", error);
+  //     }
+  //   }
+  // };
+
+  // const downloadSectionAsImage = async (sectionId: string) => {
+  //   const sectionElement = document.getElementById(`section-${sectionId}`);
+  //   if (!sectionElement) return;
+
+  //   try {
+  //     // Temporarily add a "screenshot-mode" class for additional CSS control (optional but useful)
+  //     sectionElement.classList.add("screenshot-mode");
+
+  //     const dataUrl = await domtoimage.toPng(sectionElement, {
+  //       bgcolor: "#ffffff",
+  //       style: {
+  //         transform: "scale(1)",
+  //         transformOrigin: "top left",
+  //       },
+  //       filter: (node: any) => {
+  //         const el = node as HTMLElement;
+  //         if (el && el.style) {
+  //           el.style.border = "none";
+  //           el.style.outline = "none";
+  //           el.style.boxShadow = "none";
+  //         }
+  //         return true;
+  //       },
+  //     });
+
+  //     // Clean up
+  //     sectionElement.classList.remove("screenshot-mode");
+
+  //     // Trigger download
+  //     const link = document.createElement("a");
+  //     const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
+  //     link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
+  //     link.href = dataUrl;
+  //     link.click();
+  //   } catch (error) {
+  //     console.error("DOM to Image error:", error);
+  //   }
+  // };
   const downloadSectionAsImage = async (sectionId: string) => {
     const sectionElement = document.getElementById(`section-${sectionId}`);
-    console.log(sectionElement);
-    if (sectionElement) {
-      try {
-        const canvas = await html2canvas(sectionElement, {
-          backgroundColor: "#ffffff",
-          scale: 2,
-          useCORS: true,
-          height: sectionElement.scrollHeight,
-          width: sectionElement.scrollWidth,
-        });
+    if (!sectionElement) return;
 
-        const link = document.createElement("a");
-        const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
-        link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
-        link.href = canvas.toDataURL();
-        link.click();
-      } catch (error) {
-        console.error("Error generating section image:", error);
-      }
+    try {
+      sectionElement.classList.add("screenshot-mode");
+
+      const dataUrl = await domtoimage.toPng(sectionElement, {
+        bgcolor: "#ffffff",
+        style: {
+          transform: "scale(1)",
+          transformOrigin: "top left",
+        },
+        filter: (node: any) => {
+          if (node instanceof HTMLElement) {
+            const computed = window.getComputedStyle(node);
+
+            const hasRealBorder =
+              computed.borderTopWidth !== "0px" ||
+              computed.borderRightWidth !== "0px" ||
+              computed.borderBottomWidth !== "0px" ||
+              computed.borderLeftWidth !== "0px";
+
+            // Only force border: none if no real border is set
+            if (!hasRealBorder) {
+              node.style.border = "none";
+            }
+
+            // Always remove outlines or default shadows
+            node.style.outline = "none";
+            node.style.boxShadow = "none";
+          }
+
+          return true;
+        },
+      });
+
+      sectionElement.classList.remove("screenshot-mode");
+
+      const link = document.createElement("a");
+      const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
+      link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (error) {
+      console.error("DOM to Image error:", error);
     }
   };
 
@@ -870,11 +975,16 @@ export default function WeeklyPlanBuilder() {
                 {/* This Week at a Glance */}
                 {sections.find((s) => s.id === "glance")?.visible && (
                   <div id="section-glance" className="relative">
-                    <div className="absolute top-0 left-0 w-full overflow-hidden leading-none"></div>
-                    <div className="pt-16 pb-12 px-8">
+                    <div className="absolute top-[100px] left-0 z-1  w-full overflow-hidden leading-none">
+                      <img
+                        src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748494424/Frame_629381_kzkmyn.png"
+                        alt=""
+                      />
+                    </div>
+                    <div className="pt-16 pb-12 px-8 ">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                         <div>
-                          <h2 className="text-[36px] font-bold mb-4">
+                          <h2 className="text-[36px] font-bold mt-[170px] mb-6">
                             {(() => {
                               const heading = sections.find((s) => s.id === "glance")?.content.heading || "";
                               const words = heading.trim().split(" ");
@@ -883,8 +993,10 @@ export default function WeeklyPlanBuilder() {
 
                               return (
                                 <>
-                                  <span className="text-[#000]">{rest}</span>
-                                  <span className="text-[52px] block leading-[0.8] text-[#0084EE]">{lastWord}</span>
+                                  <span className="text-[#000] z-10">{rest}</span>
+                                  <span className="text-[52px] block leading-[0.8] text-[#0084EE] z-10">
+                                    {lastWord}
+                                  </span>
                                 </>
                               );
                             })()}
@@ -894,7 +1006,7 @@ export default function WeeklyPlanBuilder() {
                             {sections.find((s) => s.id === "glance")?.content.text}
                           </p>
                         </div>
-                        <div className="flex justify-center bg-[#DBE8FF] py-5 px-0 rounded-xl">
+                        <div className="flex justify-center bg-[#DBE8FF] py-5 px-0 rounded-xl z-10">
                           <img
                             src={
                               sections.find((s) => s.id === "glance")?.content.stickyNotesImage ||
@@ -929,22 +1041,28 @@ export default function WeeklyPlanBuilder() {
                       <div className="flex justify-between items-center pb-12">
                         <div>
                           <img
-                            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748420615/String_6_rqstyl.png"
+                            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748496364/Artboard_1-80_c1lvtu.jpg"
                             alt=""
+                            style={{ width: "143px", height: "auto" }}
                           />
                         </div>
                         <div>
-                          <Dots />
+                          {/* <Dots /> */}
+                          <img
+                            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748501768/p2u441nvtp1abvmi2mwp.png"
+                            alt=""
+                            style={{ width: "50px", height: "23px" }}
+                          />
                         </div>
                       </div>
                       <div>
                         <h2 className="text-[#000] text-[30px] font-bold pb-5">Executive Summary</h2>
                       </div>
-                      <div className=" bg-[#0084EE] p-4 mb-2 rounded-t-xl items-center d-flex">
+                      <div className=" bg-[#0084EE] p-4 mb-1 rounded-t-xl items-center d-flex">
                         <h2 className="text-[#fff] font-bold uppercase  tracking-wider">Status update</h2>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-4 mb-8">
+                      <div className="grid grid-cols-3 gap-1 mb-8">
                         {sections
                           .find((s) => s.id === "summary")
                           ?.content.statusCards.map((card: StatusCard) => (
@@ -966,7 +1084,12 @@ export default function WeeklyPlanBuilder() {
                       </div>
                       {/* Overall Status */}
                       <div className="flex gap-4 mb-4">
-                        <Play />
+                        <div>
+                          <img
+                            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748501235/obikjdvbcdzdud6ojiue.png"
+                            alt=""
+                          />
+                        </div>
                         <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px]">Overall Status:</h3>
                       </div>
 
@@ -987,8 +1110,12 @@ export default function WeeklyPlanBuilder() {
                             </div>
                           ))}
                       </div>
-                      <div className="flex gap-4 mb-4 pt-8">
-                        <Play />
+                      <div className="flex gap-4 mb-4 mt-8">
+                        <img
+                          src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748501235/obikjdvbcdzdud6ojiue.png"
+                          alt=""
+                          style={{ width: "22px", height: "24px" }}
+                        />
                         <h3 className="text-xl font-bold text-gray-900 mb-1 text-[25px] ">Next:</h3>
                       </div>
                       {sections
@@ -997,7 +1124,11 @@ export default function WeeklyPlanBuilder() {
                           <div key={item.id} className="pb-3 ml-9">
                             <div className="flex items-start gap-3 ">
                               <div>
-                                <Point />
+                                <img
+                                  src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748503628/doticons_bjqtct.png"
+                                  alt=""
+                                  style={{ width: "18px", height: "auto" }}
+                                />
                               </div>
 
                               <div className="flex-1 ">
@@ -1013,14 +1144,20 @@ export default function WeeklyPlanBuilder() {
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
                   <div id="section-updates" className=" px-8 py-12 ">
-                    <div className=" flex items-center gap-3 mb-8 relative">
-                      <div className="abosulte bg-black z-[-1]"></div>
+                    <div className=" flex items-center  mb-8 relative">
+                      <div className="absolute  z-[1] w-full top-12 ">
+                        <img
+                          src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748488830/Subtract_1_my79z1.png"
+                          alt=""
+                          className="w-full"
+                        />
+                      </div>
 
-                      <h2 className=" text-[45px] font-bold whitespace-nowrap text-start">
+                      <h2 className=" text-[45px] font-bold whitespace-nowrap text-start z-[2] pt-32">
                         <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
                         <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
                       </h2>
-                      <div className="absolute right-16">
+                      <div className="absolute right-[7rem] top-[50px] z-[2]">
                         <img
                           src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748340755/get_vectorize_image_a0quqv.png"
                           alt=""
@@ -1146,7 +1283,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Time-Off Schedule */}
                 {sections.find((s) => s.id === "schedule")?.visible && (
-                  <div id="section-schedule">
+                  <div id="section-schedule" className="pb-16">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -1164,7 +1301,11 @@ export default function WeeklyPlanBuilder() {
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
                           <div className="flex items-center gap-4">
-                            <div className="text-2xl font-bold text-blue-600">{emailData.company}</div>
+                            <img
+                              src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748496364/Artboard_1-80_c1lvtu.jpg"
+                              alt=""
+                              style={{ width: "143px", height: "auto" }}
+                            />
                           </div>
                         </div>
 
@@ -1199,9 +1340,9 @@ export default function WeeklyPlanBuilder() {
                           </div>
 
                           {/* Right Side - Calendar */}
-                          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden rounded-t-[50px]">
                             {/* Calendar Header */}
-                            <div className="bg-blue-600 text-white p-4 text-center">
+                            <div className="bg-[#004AAD] text-white p-4 text-center  ">
                               <h3 className="text-lg font-semibold">
                                 {sections.find((s) => s.id === "schedule")?.content.month}{" "}
                                 {sections.find((s) => s.id === "schedule")?.content.year}
@@ -1296,7 +1437,7 @@ export default function WeeklyPlanBuilder() {
                             }}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-lg font-semibold">{button}</span>
+                              <span className="text-lg ">{button}</span>
                               <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                             </div>
                           </div>
@@ -1304,28 +1445,30 @@ export default function WeeklyPlanBuilder() {
                     </div>
                     {sections.find((s) => s.id === "Additional")?.visible && (
                       <>
-                        <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
-                          Additional Resources
-                        </div>
-                        <div className="space-y-4">
-                          {sections
-                            .find((s) => s.id === "Additional")
-                            ?.content.buttons.map((button: string, index: number) => (
-                              <div
-                                key={index}
-                                className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
-                                style={{
-                                  backgroundColor:
-                                    sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
-                                  color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
-                                }}
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span className="text-lg font-semibold">{button}</span>
-                                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                        <div id="section-Additional">
+                          <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
+                            Additional Resources
+                          </div>
+                          <div className="space-y-4">
+                            {sections
+                              .find((s) => s.id === "Additional")
+                              ?.content.buttons.map((button: string, index: number) => (
+                                <div
+                                  key={index}
+                                  className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
+                                  style={{
+                                    backgroundColor:
+                                      sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
+                                    color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
+                                  }}
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-lg ">{button}</span>
+                                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))}
+                          </div>
                         </div>
                       </>
                     )}
@@ -1333,9 +1476,13 @@ export default function WeeklyPlanBuilder() {
                 )}
                 <div
                   id="section-footer"
-                  className=" py-8 px-8 text-center  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10"
+                  className=" py-8 px-8 text-center pb-16  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10"
                 >
-                  <img src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748420615/String_6_rqstyl.png" alt="" />
+                  <img
+                    src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748496364/Artboard_1-80_c1lvtu.jpg"
+                    alt=""
+                    style={{ width: "143px", height: "auto" }}
+                  />
                 </div>
               </div>
             </div>
@@ -1567,16 +1714,6 @@ export default function WeeklyPlanBuilder() {
                                       <X className="w-3 h-3" />
                                     </button>
                                   </div>
-
-                                  <select
-                                    value={item.status}
-                                    onChange={(e) => updateNextItem(section.id, item.id, "status", e.target.value)}
-                                    className="w-full px-1 py-1 border border-gray-300 rounded text-xs"
-                                  >
-                                    <option value="completed">Completed</option>
-                                    <option value="progress">In Progress</option>
-                                    <option value="blocked">Blocked</option>
-                                  </select>
                                 </div>
                               ))}
                             </div>
