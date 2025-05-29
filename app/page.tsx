@@ -188,12 +188,12 @@ export default function WeeklyPlanBuilder() {
           { id: "2", title: "Timeline", color: "yellow", description: "on-schedule" },
           { id: "3", title: "Issues/Risks", color: "red", description: "no issues" },
         ],
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
+        text: "The project is progressing steadily, with major deliverables on track and minimal risks identified. ",
         statusItems: [
           {
             id: "1",
             icon: "check",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor fssdfdsfdsf",
+            title: "User Data Migration Successfully Completed and System Fully Validated",
             description: "Successfully migrated user data to new infrastructure",
             nextStep: "Monitor performance metrics",
             status: "completed",
@@ -201,7 +201,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "2",
             icon: "clock",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor sdfgsdf",
+            title: "Ongoing Quality Assurance and Regression Testing Across Modules",
             description: "Quality assurance testing in progress",
             nextStep: "Complete regression testing",
             status: "progress",
@@ -209,7 +209,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "3",
             icon: "warning",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+            title: "Third-Party API is Experiencing Ongoing Instability Issues",
             description: "Third-party API experiencing intermittent issues",
             nextStep: "Contact vendor support",
             status: "blocked",
@@ -219,7 +219,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "1",
             icon: "check",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor sdfsdfsdf",
+            title: "Final Phase of Data Migration Completed with Full Validation Checks",
             description: "Successfully migrated user data to new infrastructure",
             nextStep: "Monitor performance metrics",
             status: "completed",
@@ -227,7 +227,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "2",
             icon: "clock",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+            title: "Finalization of Testing Procedures and QA Sign-off Pending",
             description: "Quality assurance testing in progress",
             nextStep: "Complete regression testing",
             status: "progress",
@@ -235,7 +235,7 @@ export default function WeeklyPlanBuilder() {
           {
             id: "3",
             icon: "warning",
-            title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+            title: "External Vendor Support Required to Resolve API Communication Errors",
             description: "Third-party API experiencing intermittent issues",
             nextStep: "Contact vendor support",
             status: "blocked",
@@ -249,13 +249,13 @@ export default function WeeklyPlanBuilder() {
       visible: true,
 
       content: {
-        text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
+        text: "Below are the latest updates across key workstreams, including current progress, project status, and associated priorities.",
         projects: [
           {
             id: "1",
-            title: "Overall Project",
+            title: "Frontend Redesign Rollout",
             description:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+              "The team is actively working on implementing the updated UI based on the finalized Figma designs. Key components have been migrated to the new design system, and mobile responsiveness is currently being optimized.",
             status: "In Progress",
             priority: "High",
             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
@@ -263,9 +263,9 @@ export default function WeeklyPlanBuilder() {
           },
           {
             id: "2",
-            title: "Overall Project",
+            title: "Backend API Stabilization",
             description:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+              "The backend team has completed integration testing for critical endpoints. Remaining work includes load testing and documentation for partner APIs to ensure performance benchmarks are met before deployment.",
             status: "Review",
             priority: "Medium",
             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
@@ -273,9 +273,9 @@ export default function WeeklyPlanBuilder() {
           },
           {
             id: "3",
-            title: "Overall Project",
+            title: "Security & Compliance Review",
             description:
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+              "Our security team has completed the first round of internal audits and compliance checks. Current focus is on resolving flagged issues and preparing necessary reports for the upcoming third-party review.",
             status: "Review",
             priority: "Medium",
             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
@@ -328,14 +328,11 @@ export default function WeeklyPlanBuilder() {
       visible: true,
       content: {
         subtitle:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim",
+          "Stay informed with categorized updates across major customer, support, and product development areas. ",
         buttons: [
           "New Customer Onboarding Updates",
           "Customer Issue Resolution Updates",
           "Development Request Updates",
-          "New Upgrade 1",
-          "New Upgrade 2",
-          "New Upgrade 3",
         ],
       },
       styles: {
@@ -1099,7 +1096,7 @@ export default function WeeklyPlanBuilder() {
                           ?.content.statusItems.map((item: StatusItem) => (
                             <div key={item.id} className="pb-3 ml-9">
                               <div className="flex items-start gap-3">
-                                <div>
+                                <div className="mt-[2px]">
                                   <span className="block">{getStatusIcon(item.status)}</span>
                                 </div>
 
@@ -1123,7 +1120,7 @@ export default function WeeklyPlanBuilder() {
                         ?.content.nextItems.map((item: StatusItem) => (
                           <div key={item.id} className="pb-3 ml-9">
                             <div className="flex items-start gap-3 ">
-                              <div>
+                              <div className="mt-[2px]">
                                 <img
                                   src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748503628/doticons_bjqtct.png"
                                   alt=""
@@ -1438,7 +1435,11 @@ export default function WeeklyPlanBuilder() {
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-lg ">{button}</span>
-                              <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                              <img
+                                src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748504399/arrowicons_zb1t9e.png"
+                                alt=""
+                                style={{ width: "44px", height: "auto" }}
+                              />
                             </div>
                           </div>
                         ))}
@@ -1464,7 +1465,11 @@ export default function WeeklyPlanBuilder() {
                                 >
                                   <div className="flex items-center justify-between">
                                     <span className="text-lg ">{button}</span>
-                                    <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                                    <img
+                                      src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748504399/arrowicons_zb1t9e.png"
+                                      alt=""
+                                      style={{ width: "44px", height: "auto" }}
+                                    />
                                   </div>
                                 </div>
                               ))}
