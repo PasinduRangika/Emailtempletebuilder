@@ -2,8 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Download, Eye, EyeOff, Settings, Layout, Target, X, Plus, CalendarIcon } from "lucide-react";
-
+import html2canvas from "html2canvas";
 import domtoimage from "dom-to-image-more";
+import { toPng } from "html-to-image";
 
 interface Section {
   id: string;
@@ -708,6 +709,55 @@ export default function WeeklyPlanBuilder() {
     return dates.sort((a, b) => a - b).join(", ");
   };
 
+  // const downloadSectionAsImage = async (sectionId: string) => {
+  //   const sectionElement = document.getElementById(`section-${sectionId}`);
+  //   if (!sectionElement) return;
+
+  //   try {
+  //     sectionElement.classList.add("screenshot-mode");
+
+  //     const dataUrl = await domtoimage.toPng(sectionElement, {
+  //       bgcolor: "#ffffff",
+  //       style: {
+  //         transform: "scale(1)",
+  //         transformOrigin: "top left",
+  //       },
+  //       filter: (node: any) => {
+  //         if (node instanceof HTMLElement) {
+  //           const computed = window.getComputedStyle(node);
+
+  //           const hasRealBorder =
+  //             computed.borderTopWidth !== "0px" ||
+  //             computed.borderRightWidth !== "0px" ||
+  //             computed.borderBottomWidth !== "0px" ||
+  //             computed.borderLeftWidth !== "0px";
+
+  //           // Only force border: none if no real border is set
+  //           if (!hasRealBorder) {
+  //             node.style.border = "none";
+  //           }
+
+  //           // Always remove outlines or default shadows
+  //           node.style.outline = "none";
+  //           node.style.boxShadow = "none";
+  //         }
+
+  //         return true;
+  //       },
+  //     });
+
+  //     sectionElement.classList.remove("screenshot-mode");
+
+  //     const link = document.createElement("a");
+  //     const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
+  //     link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
+  //     link.href = dataUrl;
+  //     link.click();
+  //   } catch (error) {
+  //     console.error("DOM to Image error:", error);
+  //   }
+  // };
+
   const downloadSectionAsImage = async (sectionId: string) => {
     const sectionElement = document.getElementById(`section-${sectionId}`);
     if (!sectionElement) return;
@@ -715,32 +765,32 @@ export default function WeeklyPlanBuilder() {
     try {
       sectionElement.classList.add("screenshot-mode");
 
-      const dataUrl = await domtoimage.toPng(sectionElement, {
-        bgcolor: "#ffffff",
+      // Clean image styles (optional if you still face gray borders)
+      sectionElement.querySelectorAll("img").forEach((img) => {
+        img.style.border = "none";
+        img.style.outline = "none";
+        img.style.boxShadow = "none";
+        img.style.background = "transparent";
+      });
+
+      const dataUrl = await toPng(sectionElement, {
+        backgroundColor: "#ffffff",
         style: {
           transform: "scale(1)",
           transformOrigin: "top left",
         },
         filter: (node: any) => {
           if (node instanceof HTMLElement) {
-            const computed = window.getComputedStyle(node);
-
-            const hasRealBorder =
-              computed.borderTopWidth !== "0px" ||
-              computed.borderRightWidth !== "0px" ||
-              computed.borderBottomWidth !== "0px" ||
-              computed.borderLeftWidth !== "0px";
-
-            // Only force border: none if no real border is set
-            if (!hasRealBorder) {
-              node.style.border = "none";
-            }
-
-            // Always remove outlines or default shadows
             node.style.outline = "none";
             node.style.boxShadow = "none";
-          }
 
+            if (node.tagName === "IMG") {
+              node.style.border = "none";
+              node.style.outline = "none";
+              node.style.boxShadow = "none";
+              node.style.background = "transparent";
+            }
+          }
           return true;
         },
       });
@@ -753,7 +803,7 @@ export default function WeeklyPlanBuilder() {
       link.href = dataUrl;
       link.click();
     } catch (error) {
-      console.error("DOM to Image error:", error);
+      console.error("HTML to Image error:", error);
     }
   };
 
@@ -872,13 +922,13 @@ export default function WeeklyPlanBuilder() {
               <div ref={previewRef} className="bg-white overflow-hidden" style={{ width: "800px", margin: "0 auto" }}>
                 <div id="section-header" className="relative h-[550px] bg-gradient-to-r overflow-hidden">
                   <div
-                    className="relative bg-contain bg-center bg-no-repeat h-full w-full"
+                    className="relative bg-cover bg-center bg-no-repeat h-full w-full"
                     style={{
                       backgroundImage: `url('${emailData.headerBgImage}')`,
                     }}
                   >
                     {/* Content overlay */}
-                    <div className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-between p-8 bg-[#191919] w-[550px] h-[240px]">
+                    <div className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-between p-8 bg-[#191919] w-[550px] h-[255px]">
                       <div className="flex  flex-col justify-between items-start h-full">
                         <div className="text-[32px] font-bold text-[#0084EE]">{emailData.company}</div>
                         <h1 className="text-[56px] font-bold mb-2 text-white">{emailData.title}</h1>
@@ -1059,7 +1109,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Important Updates */}
                 {sections.find((s) => s.id === "updates")?.visible && (
-                  <div id="section-updates" className=" px-8 py-12 ">
+                  <div id="section-updates" className=" py-12 ">
                     <div className=" flex items-center  mb-8 relative">
                       <div className="absolute  z-[1] w-full top-12 ">
                         <img
@@ -1069,23 +1119,23 @@ export default function WeeklyPlanBuilder() {
                         />
                       </div>
 
-                      <h2 className=" text-[45px] font-bold whitespace-nowrap text-start z-[2] pt-32">
+                      <h2 className=" text-[45px] font-bold whitespace-nowrap text-start z-[2] pt-32 px-8">
                         <span className="text-[#555] leading-[0.1] text-[38px] ">Important</span>
                         <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
                       </h2>
-                      <div className="absolute right-[7rem] top-[50px] z-[2]">
+                      <div className="absolute right-[7rem] top-[50px] z-[2] ">
                         <img
                           src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748340755/get_vectorize_image_a0quqv.png"
                           alt=""
                         />
                       </div>
                     </div>
-                    <div className="pb-10 w-2/3">
+                    <div className="pb-10 w-2/3 px-8">
                       <p className="text-lg leading-[1.2] text-start text-[#4A4A4A]">
                         {sections.find((s) => s.id === "updates")?.content.text}
                       </p>
                     </div>
-                    <div className="space-y-6">
+                    <div className="space-y-6 px-8">
                       {sections
                         .find((s) => s.id === "updates")
                         ?.content.projects.map((project: Project, index: number) => {
