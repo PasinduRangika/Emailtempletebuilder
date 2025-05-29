@@ -1,28 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import html2canvas from "html2canvas";
-import {
-  Download,
-  Eye,
-  EyeOff,
-  Settings,
-  Layout,
-  ArrowRight,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  Target,
-  X,
-  Plus,
-  CalendarIcon,
-} from "lucide-react";
-import Completed from "../components/assets/icons/completed/Completed";
-import Process from "../components/assets/icons/process/Process";
-import Play from "../components/assets/icons/play/Play";
-import Dots from "../components/assets/icons/dots/Dots";
-import Point from "../components/assets/icons/point/Point";
-import BgLine from "../components/assets/icons/bgline/BgLine";
+import { Download, Eye, EyeOff, Settings, Layout, Target, X, Plus, CalendarIcon } from "lucide-react";
+
 import domtoimage from "dom-to-image-more";
 
 interface Section {
@@ -1124,7 +1104,7 @@ export default function WeeklyPlanBuilder() {
                                 <img
                                   src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748503628/doticons_bjqtct.png"
                                   alt=""
-                                  style={{ width: "18px", height: "auto" }}
+                                  style={{ width: "16px", height: "auto" }}
                                 />
                               </div>
 
@@ -1172,19 +1152,19 @@ export default function WeeklyPlanBuilder() {
                         ?.content.projects.map((project: Project, index: number) => {
                           const isEven = index % 2 === 0;
                           const contentRadius = isEven
-                            ? " rounded-tr-[16px] rounded-br-[16px]" // Image on left, content on right
-                            : " rounded-tl-[16px] rounded-bl-[16px]"; // Image on right, content on left
+                            ? " rounded-tr-[15px] rounded-br-[15px]" // Image on left, content on right
+                            : " rounded-tl-[15px] rounded-bl-[15px]"; // Image on right, content on left
 
                           return (
                             <div
                               key={project.id}
-                              className={`${getStatusCardColor(project.bgColor)} rounded-[15px] shadow-md p-3`}
+                              className={`${getStatusCardColor(project.bgColor)} rounded-[16px] shadow-md p-1`}
                             >
                               <div className={`flex gap-6 ${isEven ? "flex-row" : "flex-row-reverse"}`}>
                                 <img
                                   src={project.imageUrl || "/placeholder.svg"}
                                   alt={project.title}
-                                  className="w-1/3 h-auto object-cover rounded-lg flex-shrink-0"
+                                  className="w-1/3  h-auto p-3 object-cover rounded-lg flex-shrink-0"
                                 />
                                 <div className={`flex-1 bg-white p-6 ${contentRadius}`}>
                                   <div className="flex items-start justify-between mb-3">
@@ -1296,12 +1276,19 @@ export default function WeeklyPlanBuilder() {
                       // Calendar View
                       <div className="bg-white rounded-2xl   p-8 max-w-4xl mx-auto">
                         {/* Header */}
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-20">
                           <div className="flex items-center gap-4">
                             <img
                               src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748496364/Artboard_1-80_c1lvtu.jpg"
                               alt=""
                               style={{ width: "143px", height: "auto" }}
+                            />
+                          </div>
+                          <div>
+                            <img
+                              src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748501768/p2u441nvtp1abvmi2mwp.png"
+                              alt=""
+                              style={{ width: "50px", height: "23px" }}
                             />
                           </div>
                         </div>
@@ -1313,7 +1300,12 @@ export default function WeeklyPlanBuilder() {
                             <div className="space-y-6">
                               <h2 className="text-4xl font-bold text-gray-900 mb-8">Time-Off</h2>
                               <div className="flex items-center gap-3">
-                                <div className="w-0 h-0 border-l-8 border-l-blue-600 border-t-4 border-t-transparent border-b-4 border-b-transparent"></div>
+                                {/* <div className="w-0 h-0 border-l-8 border-l-blue-600 border-t-4 border-t-transparent border-b-4 border-b-transparent"></div> */}
+                                <img
+                                  src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748501235/obikjdvbcdzdud6ojiue.png"
+                                  alt=""
+                                  style={{ width: "18px", height: "auto" }}
+                                />
                                 <span className="text-lg font-medium text-gray-700">
                                   Month: {sections.find((s) => s.id === "schedule")?.content.month}
                                 </span>
@@ -1337,7 +1329,7 @@ export default function WeeklyPlanBuilder() {
                           </div>
 
                           {/* Right Side - Calendar */}
-                          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden rounded-t-[50px]">
+                          <div className="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden rounded-t-[30px]">
                             {/* Calendar Header */}
                             <div className="bg-[#004AAD] text-white p-4 text-center  ">
                               <h3 className="text-lg font-semibold">
