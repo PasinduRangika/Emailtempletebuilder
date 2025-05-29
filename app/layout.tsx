@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Codimite Email Builder",
-  description: "Created with v0",
-  generator: "v0.dev",
+  description: "Created with Codimite",
+  generator: "Codimite Development Team",
 };
 
 export default function RootLayout({

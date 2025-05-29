@@ -708,67 +708,6 @@ export default function WeeklyPlanBuilder() {
     return dates.sort((a, b) => a - b).join(", ");
   };
 
-  // const downloadSectionAsImage = async (sectionId: string) => {
-  //   const sectionElement = document.getElementById(`section-${sectionId}`);
-  //   if (sectionElement) {
-  //     try {
-  //       const canvas = await html2canvas(sectionElement, {
-  //         backgroundColor: "#ffffff",
-  //         scale: 2,
-  //         useCORS: true,
-  //         height: sectionElement.scrollHeight,
-  //         width: sectionElement.scrollWidth,
-  //       });
-
-  //       const link = document.createElement("a");
-  //       const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
-  //       link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
-  //       link.href = canvas.toDataURL();
-  //       link.click();
-  //     } catch (error) {
-  //       console.error("Error generating section image:", error);
-  //     }
-  //   }
-  // };
-
-  // const downloadSectionAsImage = async (sectionId: string) => {
-  //   const sectionElement = document.getElementById(`section-${sectionId}`);
-  //   if (!sectionElement) return;
-
-  //   try {
-  //     // Temporarily add a "screenshot-mode" class for additional CSS control (optional but useful)
-  //     sectionElement.classList.add("screenshot-mode");
-
-  //     const dataUrl = await domtoimage.toPng(sectionElement, {
-  //       bgcolor: "#ffffff",
-  //       style: {
-  //         transform: "scale(1)",
-  //         transformOrigin: "top left",
-  //       },
-  //       filter: (node: any) => {
-  //         const el = node as HTMLElement;
-  //         if (el && el.style) {
-  //           el.style.border = "none";
-  //           el.style.outline = "none";
-  //           el.style.boxShadow = "none";
-  //         }
-  //         return true;
-  //       },
-  //     });
-
-  //     // Clean up
-  //     sectionElement.classList.remove("screenshot-mode");
-
-  //     // Trigger download
-  //     const link = document.createElement("a");
-  //     const sectionName = sections.find((s) => s.id === sectionId)?.title || sectionId;
-  //     link.download = `${sectionName.toLowerCase().replace(/\s+/g, "-")}.png`;
-  //     link.href = dataUrl;
-  //     link.click();
-  //   } catch (error) {
-  //     console.error("DOM to Image error:", error);
-  //   }
-  // };
   const downloadSectionAsImage = async (sectionId: string) => {
     const sectionElement = document.getElementById(`section-${sectionId}`);
     if (!sectionElement) return;
@@ -1400,7 +1339,7 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Segmented Overview of Updates */}
                 {sections.find((s) => s.id === "overview")?.visible && (
-                  <div id="section-overview" className="px-8 py-12">
+                  <div id="section-overview" className="py-12">
                     <div className="flex items-center justify-center my-8">
                       <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
                       <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
@@ -1413,10 +1352,11 @@ export default function WeeklyPlanBuilder() {
                       {sections.find((s) => s.id === "overview")?.content.subtitle}
                     </p>
                     <div className="space-y-4">
-                      {sections
+                      {/* {sections
                         .find((s) => s.id === "overview")
                         ?.content.buttons.map((button: string, index: number) => (
                           <div
+                            id={`section-${button}`}
                             key={index}
                             className="p-6 rounded-[32px]  cursor-pointer transition-colors group w-2/3 mx-auto"
                             style={{
@@ -1434,43 +1374,74 @@ export default function WeeklyPlanBuilder() {
                               />
                             </div>
                           </div>
+                        ))} */}
+
+                      {sections
+                        .find((s) => s.id === "overview")
+                        ?.content.buttons.map((button: string, index: number) => (
+                          <div id={`section-${button}`} key={index} className="pb-8">
+                            {/* <div className="pb-4"> */}
+                            <div
+                              className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
+                              style={{
+                                backgroundColor:
+                                  sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
+                                color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
+                              }}
+                              onClick={() => downloadSectionAsImage(button)} // ← attach handler here
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-lg">{button}</span>
+                                <img
+                                  src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748504399/arrowicons_zb1t9e.png"
+                                  alt=""
+                                  style={{ width: "44px", height: "auto" }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          // </div>
                         ))}
                     </div>
-                    {sections.find((s) => s.id === "Additional")?.visible && (
-                      <>
-                        <div id="section-Additional">
-                          <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
-                            Additional Resources
-                          </div>
-                          <div className="space-y-4">
-                            {sections
-                              .find((s) => s.id === "Additional")
-                              ?.content.buttons.map((button: string, index: number) => (
-                                <div
-                                  key={index}
-                                  className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
-                                  style={{
-                                    backgroundColor:
-                                      sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
-                                    color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
-                                  }}
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <span className="text-lg ">{button}</span>
-                                    <img
-                                      src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748504399/arrowicons_zb1t9e.png"
-                                      alt=""
-                                      style={{ width: "44px", height: "auto" }}
-                                    />
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
                 )}
+
+                {sections.find((s) => s.id === "Additional")?.visible && (
+                  <>
+                    <div id="section-Additional" className="pb-16">
+                      <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
+                        Additional Resources
+                      </div>
+                      <div className="space-y-4">
+                        {sections
+                          .find((s) => s.id === "Additional")
+                          ?.content.buttons.map((button: string, index: number) => (
+                            <div id={`section-${button}`} key={index} className="pb-8">
+                              <div
+                                className="p-6 rounded-[32px] cursor-pointer transition-colors group w-2/3 mx-auto"
+                                style={{
+                                  backgroundColor:
+                                    sections.find((s) => s.id === "overview")?.styles?.backgroundColor || "#0084EE",
+                                  color: sections.find((s) => s.id === "overview")?.styles?.textColor || "#FFFFFF",
+                                }}
+                                onClick={() => downloadSectionAsImage(button)}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-lg">{button}</span>
+                                  <img
+                                    src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748504399/arrowicons_zb1t9e.png"
+                                    alt=""
+                                    style={{ width: "44px", height: "auto" }}
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 <div
                   id="section-footer"
                   className=" py-8 px-8 text-center pb-16  flex justify-center my-8 border-t border-t-[rgba(0,0,0,0.12)] p-10"
