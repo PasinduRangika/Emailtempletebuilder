@@ -1460,8 +1460,12 @@ export default function WeeklyPlanBuilder() {
 
                 {sections.find((s) => s.id === "Additional")?.visible && (
                   <>
-                    <div id="section-Additional" className="pb-16">
-                      <div className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8">
+                    <div className="pb-16">
+                      <div
+                        id="section-Additional"
+                        className="text-center text-[#4A4A4A] flex justify-center text-[30px] py-8"
+                        style={{ width: "800px" }}
+                      >
                         Additional Resources
                       </div>
                       <div className="space-y-4">
