@@ -1389,18 +1389,20 @@ export default function WeeklyPlanBuilder() {
 
                 {/* Segmented Overview of Updates */}
                 {sections.find((s) => s.id === "overview")?.visible && (
-                  <div id="section-overview" className="py-12">
-                    <div className="flex items-center justify-center my-8">
-                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
-                      <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
-                        <span className="text-[#555] leading-[0.1] text-[38px] ">Segmented Overview of</span>
-                        <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
-                      </h2>
-                      <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                  <div className="py-12">
+                    <div className="py-8" id="section-overview">
+                      <div className="flex items-center justify-center my-8">
+                        <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                        <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
+                          <span className="text-[#555] leading-[0.1] text-[38px] ">Segmented Overview of</span>
+                          <span className="text-[#000] block text-[58px] leading-[0.8]">Updates</span>
+                        </h2>
+                        <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                      </div>
+                      <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
+                        {sections.find((s) => s.id === "overview")?.content.subtitle}
+                      </p>
                     </div>
-                    <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
-                      {sections.find((s) => s.id === "overview")?.content.subtitle}
-                    </p>
                     <div className="space-y-4">
                       {/* {sections
                         .find((s) => s.id === "overview")
