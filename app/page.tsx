@@ -147,6 +147,8 @@ const defaultEmailData = {
   headerBgImage: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748259697/Hero-BG-5_ltg44g.png",
   logo: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748927826/codimite_logo_awsda5.png",
   overlayBgColor: "#191919",
+  titleColor: "#ffffff",
+  dateRangeColor: "#ffffff",
 };
 
 const defaultSections = [
@@ -909,9 +911,7 @@ export default function WeeklyPlanBuilder() {
   }, [isDownloadDropdownOpen]);
 
   const handleAddCustomSection = () => {
-    // Generate a unique id for each new section
     const newSectionId = `custom-section-${Date.now()}`;
-    // You can base the new section off a template
     const newSection = {
       id: newSectionId,
       title: "Custom Section",
@@ -963,12 +963,33 @@ export default function WeeklyPlanBuilder() {
                   />
                 </div>
                 <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Title Color</label>
+                  <input
+                    type="color"
+                    value={emailData.titleColor}
+                    onChange={(e) => setEmailData({ ...emailData, titleColor: e.target.value })}
+                    className="w-12 h-8 border-0 bg-transparent"
+                    title="Title Text Color"
+                  />
+                </div>
+                <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Date Range</label>
                   <input
                     type="text"
                     value={emailData.dateRange}
                     onChange={(e) => setEmailData({ ...emailData, dateRange: e.target.value })}
                     className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Date Range Color</label>
+                  <input
+                    type="color"
+                    value={emailData.dateRangeColor}
+                    onChange={(e) => setEmailData({ ...emailData, dateRangeColor: e.target.value })}
+                    className="w-12 h-8 border-0 bg-transparent"
+                    title="Date Range Text Color"
                   />
                 </div>
                 <div>
@@ -1903,8 +1924,12 @@ export default function WeeklyPlanBuilder() {
                         <div className="text-[32px] font-bold text-[#0084EE]">
                           <img src={emailData.logo} alt="" className="w-[210px] h-[auto]" />
                         </div>
-                        <h1 className="text-[56px] font-bold mb-2 text-white">{emailData.title}</h1>
-                        <p className="text-xl text-white">{emailData.dateRange}</p>
+                        <h1 className="text-[56px] font-bold mb-2" style={{ color: emailData.titleColor }}>
+                          {emailData.title}
+                        </h1>
+                        <p className="text-xl" style={{ color: emailData.dateRangeColor }}>
+                          {emailData.dateRange}
+                        </p>
                       </div>
                     </div>
                   </div>
