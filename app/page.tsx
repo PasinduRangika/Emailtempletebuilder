@@ -146,6 +146,7 @@ const defaultEmailData = {
   company: "CODIMITE",
   headerBgImage: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748259697/Hero-BG-5_ltg44g.png",
   logo: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748927826/codimite_logo_awsda5.png",
+  overlayBgColor: "#191919",
 };
 
 const defaultSections = [
@@ -322,13 +323,12 @@ const defaultSections = [
       backgroundImage: "/placeholder.svg?height=200&width=800",
       useCustomImage: false,
       overlayText: "Schedule Grid Placeholder",
-      // Add calendar-specific content
       month: "June",
       year: 2025,
-      selectedDates: [10], // Array of selected dates
-      companyHolidays: [15, 25], // Array of company holiday dates
-      nationalHolidays: [10, 20], // Array of national holiday dates
-      useCalendarView: true, // Toggle between calendar and placeholder
+      selectedDates: [10],
+      companyHolidays: [15, 25],
+      nationalHolidays: [10, 20],
+      useCalendarView: true,
     },
     styles: {
       backgroundColor: "#F3F4F6",
@@ -385,6 +385,7 @@ export default function WeeklyPlanBuilder() {
     }
     return defaultEmailData;
   });
+
   const [sections, setSections] = useState((): any => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("weeklyPlanSections");
@@ -440,12 +441,12 @@ export default function WeeklyPlanBuilder() {
     localStorage.setItem("weeklyPlanSections", JSON.stringify(sections));
   }, [sections]);
 
-  useEffect(() => {
-    localStorage.setItem("weeklyPlanEmailData", JSON.stringify(emailData));
-  }, [emailData]);
-  useEffect(() => {
-    localStorage.setItem("weeklyPlanSections", JSON.stringify(sections));
-  }, [sections]);
+  // useEffect(() => {
+  //   localStorage.setItem("weeklyPlanEmailData", JSON.stringify(emailData));
+  // }, [emailData]);
+  // useEffect(() => {
+  //   localStorage.setItem("weeklyPlanSections", JSON.stringify(sections));
+  // }, [sections]);
 
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to reset all data?")) {
@@ -456,221 +457,6 @@ export default function WeeklyPlanBuilder() {
     }
   };
 
-  // export default function WeeklyPlanBuilder() {
-  //   const [emailData, setEmailData] = useState({
-  //     title: "Weekly Plan",
-  //     dateRange: "Week of May 3 – May 7",
-  //     company: "CODIMITE",
-  //     headerBgImage: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748259697/Hero-BG-5_ltg44g.png",
-  //     logo: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748927826/codimite_logo_awsda5.png",
-  //   });
-
-  //   const [sections, setSections] = useState<Section[]>([
-  //     {
-  //       id: "glance",
-  //       title: "This Week at a Glance",
-  //       visible: true,
-  //       content: {
-  //         heading: "THIS WEEK AT A GLANCE",
-  //         text: "Here’s a comprehensive summary of the project’s progress and upcoming steps.",
-  //         stickyNotesImage:
-  //           "https://res.cloudinary.com/diii9yu7r/image/upload/v1748326135/calendar-planner-organization-management-remind-concept_1_1_vamgkx.png",
-  //         titleTop: "",
-  //         titleBottom: "",
-  //       },
-  //       styles: {
-  //         backgroundColor: "#EBF8FF",
-  //         textColor: "#1E40AF",
-  //       },
-  //     },
-  //     {
-  //       id: "summary",
-  //       title: "Executive Summary",
-  //       visible: true,
-  //       content: {
-  //         statusCards: [
-  //           { id: "1", title: "Overall project", color: "green", description: "mainly on-track" },
-  //           { id: "2", title: "Timeline", color: "yellow", description: "on-schedule" },
-  //           { id: "3", title: "Issues/Risks", color: "red", description: "no issues" },
-  //         ],
-  //         text: "The project is progressing steadily, with major deliverables on track and minimal risks identified. ",
-  //         titleTop: "Executive",
-  //         titleBottom: "Summary",
-  //         statusItems: [
-  //           {
-  //             id: "1",
-  //             icon: "check",
-  //             title: "User Data Migration Successfully Completed and System Fully Validated",
-  //             description: "Successfully migrated user data to new infrastructure",
-  //             nextStep: "Monitor performance metrics",
-  //             status: "completed",
-  //           },
-  //           {
-  //             id: "2",
-  //             icon: "clock",
-  //             title: "Ongoing Quality Assurance and Regression Testing Across Modules",
-  //             description: "Quality assurance testing in progress",
-  //             nextStep: "Complete regression testing",
-  //             status: "progress",
-  //           },
-  //           {
-  //             id: "3",
-  //             icon: "warning",
-  //             title: "Third-Party API is Experiencing Ongoing Instability Issues",
-  //             description: "Third-party API experiencing intermittent issues",
-  //             nextStep: "Contact vendor support",
-  //             status: "blocked",
-  //           },
-  //         ],
-  //         nextItems: [
-  //           {
-  //             id: "1",
-  //             icon: "check",
-  //             title: "Final Phase of Data Migration Completed with Full Validation Checks",
-  //             description: "Successfully migrated user data to new infrastructure",
-  //             nextStep: "Monitor performance metrics",
-  //             status: "completed",
-  //           },
-  //           {
-  //             id: "2",
-  //             icon: "clock",
-  //             title: "Finalization of Testing Procedures and QA Sign-off Pending",
-  //             description: "Quality assurance testing in progress",
-  //             nextStep: "Complete regression testing",
-  //             status: "progress",
-  //           },
-  //           {
-  //             id: "3",
-  //             icon: "warning",
-  //             title: "External Vendor Support Required to Resolve API Communication Errors",
-  //             description: "Third-party API experiencing intermittent issues",
-  //             nextStep: "Contact vendor support",
-  //             status: "blocked",
-  //           },
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: "updates",
-  //       title: "Important Updates",
-  //       visible: true,
-  //       content: {
-  //         text: "Below are the latest updates across key workstreams, including current progress, project status, and associated priorities.",
-  //         titleTop: "Important",
-  //         titleBottom: "Updates",
-  //         projects: [
-  //           {
-  //             id: "1",
-  //             title: "Frontend Redesign Rollout",
-  //             description:
-  //               "The team is actively working on implementing the updated UI based on the finalized Figma designs. Key components have been migrated to the new design system, and mobile responsiveness is currently being optimized.",
-  //             status: "In Progress",
-  //             priority: "High",
-  //             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
-  //             bgColor: "blue",
-  //           },
-  //           {
-  //             id: "2",
-  //             title: "Backend API Stabilization",
-  //             description:
-  //               "The backend team has completed integration testing for critical endpoints. Remaining work includes load testing and documentation for partner APIs to ensure performance benchmarks are met before deployment.",
-  //             status: "Review",
-  //             priority: "Medium",
-  //             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
-  //             bgColor: "green",
-  //           },
-  //           {
-  //             id: "3",
-  //             title: "Security & Compliance Review",
-  //             description:
-  //               "Our security team has completed the first round of internal audits and compliance checks. Current focus is on resolving flagged issues and preparing necessary reports for the upcoming third-party review.",
-  //             status: "Review",
-  //             priority: "Medium",
-  //             imageUrl: "https://res.cloudinary.com/diii9yu7r/image/upload/v1748361545/image_18_ue0drs.png",
-  //             bgColor: "orange",
-  //           },
-  //         ],
-  //       },
-  //     },
-  //     {
-  //       id: "milestones",
-  //       title: "Planned Tasks & Milestone",
-  //       visible: true,
-  //       content: {
-  //         subtitle: "Upcoming deliverables and key milestones for the week",
-  //         backgroundImage: "/placeholder.svg?height=200&width=800",
-  //         backgroundImage2: "/placeholder.svg?height=200&width=800",
-  //         useCustomImage: false,
-  //         overlayText: "Milestone Timeline Placeholder",
-  //         titleTop: "Planned Tasks &",
-  //         titleBottom: "Milestone",
-  //       },
-  //       styles: {
-  //         backgroundColor: "#F3F4F6",
-  //         textColor: "#6B7280",
-  //       },
-  //     },
-  //     {
-  //       id: "schedule",
-  //       title: "Time-Off Schedule",
-  //       visible: true,
-  //       content: {
-  //         titleTop: "Time-Off",
-  //         titleBottom: "Schedule",
-  //         subtitle: "Team availability and scheduled time off",
-  //         backgroundImage: "/placeholder.svg?height=200&width=800",
-  //         useCustomImage: false,
-  //         overlayText: "Schedule Grid Placeholder",
-  //         // Add calendar-specific content
-  //         month: "June",
-  //         year: 2025,
-  //         selectedDates: [10], // Array of selected dates
-  //         companyHolidays: [15, 25], // Array of company holiday dates
-  //         nationalHolidays: [10, 20], // Array of national holiday dates
-  //         useCalendarView: true, // Toggle between calendar and placeholder
-  //       },
-  //       styles: {
-  //         backgroundColor: "#F3F4F6",
-  //         textColor: "#6B7280",
-  //       },
-  //     },
-  //     {
-  //       id: "overview",
-  //       title: "Segmented Overview of Updates",
-
-  //       visible: true,
-  //       content: {
-  //         subtitle:
-  //           "Stay informed with categorized updates across major customer, support, and product development areas. ",
-  //         titleTop: "Segmented Overview of",
-  //         titleBottom: "Updates",
-  //         buttons: [
-  //           "New Customer Onboarding Updates",
-  //           "Customer Issue Resolution Updates",
-  //           "Development Request Updates",
-  //         ],
-  //       },
-  //       styles: {
-  //         backgroundColor: "#0084EE",
-  //         textColor: "#FFFFFF",
-  //       },
-  //     },
-  //     {
-  //       id: "Additional",
-  //       title: "Additional Resources",
-
-  //       visible: true,
-  //       content: {
-  //         buttons: ["New Customer Onboarding Updates", "Customer Issue Resolution Updates"],
-  //         titleTop: "",
-  //         titleBottom: "",
-  //       },
-  //       styles: {
-  //         backgroundColor: "#0084EE",
-  //         textColor: "#FFFFFF",
-  //       },
-  //     },
-  //   ]);
   // State for date picker
   const [datePickerState, setDatePickerState] = useState({
     isOpen: false,
@@ -1122,6 +908,31 @@ export default function WeeklyPlanBuilder() {
     };
   }, [isDownloadDropdownOpen]);
 
+  const handleAddCustomSection = () => {
+    // Generate a unique id for each new section
+    const newSectionId = `custom-section-${Date.now()}`;
+    // You can base the new section off a template
+    const newSection = {
+      id: newSectionId,
+      title: "Custom Section",
+      visible: true,
+      content: {
+        titleTop: "Additional",
+        titleBottom: "Section",
+        subtitle: "Upcoming deliverables and key milestones for the week",
+        overlayText: "Milestone Timeline Placeholder",
+        useCustomImage: false,
+        backgroundImage: "/placeholder.svg?height=200&width=800",
+        backgroundImage2: "/placeholder.svg?height=200&width=800",
+      },
+      styles: {
+        backgroundColor: "#F3F4F6",
+        textColor: "#6B7280",
+      },
+    };
+    setSections([...sections, newSection]);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-8xl mx-auto p-6">
@@ -1162,12 +973,6 @@ export default function WeeklyPlanBuilder() {
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-700 mb-1">Company Logo</label>
-                  {/* <input
-                    type="text"
-                    value={emailData.company}
-                    onChange={(e) => setEmailData({ ...emailData, company: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  /> */}
                   <input
                     type="text"
                     value={emailData.logo}
@@ -1186,6 +991,16 @@ export default function WeeklyPlanBuilder() {
                     placeholder="Image URL"
                   />
                 </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 mb-1">Overlay Background Color</label>
+                  <input
+                    type="color"
+                    value={emailData.overlayBgColor}
+                    onChange={(e) => setEmailData({ ...emailData, overlayBgColor: e.target.value })}
+                    className="w-12 h-8 border-0 bg-transparent"
+                    title="Overlay Background Color"
+                  />
+                </div>
               </div>
             </div>
 
@@ -1197,9 +1012,9 @@ export default function WeeklyPlanBuilder() {
               </h3>
               <div className="space-y-4">
                 {sections.map((section: any) => (
-                  <div key={section.id} className="border border-gray-200 rounded p-3">
+                  <div key={section.id} className="border-b border-gray-200 rounded py-14 ">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-medium text-gray-900">{section.title}</span>
+                      <span className="text-base font-semibold text-gray-800 tracking-wide">{section.title}</span>
                       <button
                         onClick={() => toggleSection(section.id)}
                         className={`p-1 rounded ${
@@ -1209,7 +1024,6 @@ export default function WeeklyPlanBuilder() {
                         {section.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                       </button>
                     </div>
-
                     {section.visible && (
                       <div className="space-y-3">
                         {/* This Week at a Glance Controls */}
@@ -1718,6 +1532,7 @@ export default function WeeklyPlanBuilder() {
                             )}
                           </>
                         )}
+
                         {section.id === "addedsection" && (
                           <>
                             <input
@@ -1793,6 +1608,7 @@ export default function WeeklyPlanBuilder() {
                             )}
                           </>
                         )}
+
                         {/* Overview Controls */}
                         {section.id === "overview" && (
                           <>
@@ -1893,6 +1709,81 @@ export default function WeeklyPlanBuilder() {
                           </>
                         )}
                       </div>
+                    )}
+                    {section.id.startsWith("custom-section-") && (
+                      <>
+                        <input
+                          value={section.content.titleTop}
+                          onChange={(e) => updateSectionContent(section.id, "titleTop", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          placeholder="Top Title Change Here"
+                        />
+                        <input
+                          value={section.content.titleBottom}
+                          onChange={(e) => updateSectionContent(section.id, "titleBottom", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          placeholder="Bottom Title Change Here"
+                        />
+                        <textarea
+                          value={section.content.subtitle}
+                          onChange={(e) => updateSectionContent(section.id, "subtitle", e.target.value)}
+                          rows={2}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          placeholder="Subtitle"
+                        />
+                        <input
+                          type="text"
+                          value={section.content.overlayText}
+                          onChange={(e) => updateSectionContent(section.id, "overlayText", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                          placeholder="Overlay text"
+                        />
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={section.content.useCustomImage}
+                            onChange={(e) => updateSectionContent(section.id, "useCustomImage", e.target.checked)}
+                            className="w-3 h-3"
+                          />
+                          <span className="text-xs text-gray-700">Use custom image</span>
+                        </div>
+                        {section.content.useCustomImage && (
+                          <input
+                            type="text"
+                            value={section.content.backgroundImage}
+                            onChange={(e) => updateSectionContent(section.id, "backgroundImage", e.target.value)}
+                            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                            placeholder="Background image URL"
+                          />
+                        )}
+                        {section.content.useCustomImage && (
+                          <input
+                            type="text"
+                            value={section.content.backgroundImage2}
+                            onChange={(e) => updateSectionContent(section.id, "backgroundImage2", e.target.value)}
+                            className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                            placeholder="Background image URL"
+                          />
+                        )}
+                        {!section.content.useCustomImage && (
+                          <div className="flex gap-2">
+                            <input
+                              type="color"
+                              value={section.styles?.backgroundColor || "#F3F4F6"}
+                              onChange={(e) => updateSectionStyles(section.id, { backgroundColor: e.target.value })}
+                              className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                              title="Background Color"
+                            />
+                            <input
+                              type="color"
+                              value={section.styles?.textColor || "#6B7280"}
+                              onChange={(e) => updateSectionStyles(section.id, { textColor: e.target.value })}
+                              className="w-8 h-6 border border-gray-300 rounded cursor-pointer"
+                              title="Text Color"
+                            />
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
@@ -2002,7 +1893,12 @@ export default function WeeklyPlanBuilder() {
                     }}
                   >
                     {/* Content overlay */}
-                    <div className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-between p-8 bg-[#191919] w-[550px] h-[255px]">
+                    <div
+                      className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-between p-8 w-[550px] h-[255px]"
+                      style={{
+                        backgroundColor: emailData.overlayBgColor,
+                      }}
+                    >
                       <div className="flex  flex-col justify-between items-start h-full">
                         <div className="text-[32px] font-bold text-[#0084EE]">
                           <img src={emailData.logo} alt="" className="w-[210px] h-[auto]" />
@@ -2426,6 +2322,100 @@ export default function WeeklyPlanBuilder() {
                     </div>
                   </div>
                 )}
+                <div className="flex justify-center">
+                  <button
+                    onClick={handleAddCustomSection}
+                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs"
+                  >
+                    + Add New Section
+                  </button>
+                </div>
+
+                {sections
+                  .filter((section: any) => section.id.startsWith("custom-section-"))
+                  .map((section: any) => (
+                    <div key={section.id} id={`section-${section.id}`} className="px-8 py-12">
+                      {/* Section Header */}
+                      <div className="flex items-center justify-center my-8">
+                        <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                        <h2 className="px-4 text-[45px] font-bold whitespace-nowrap text-center">
+                          <span className="text-[#555] leading-[0.1] text-[38px] ">{section.content.titleTop}</span>
+                          <span className="text-[#000] block text-[58px] leading-[0.8]">
+                            {section.content.titleBottom}
+                          </span>
+                        </h2>
+                        <div className="flex-grow border-t border-[#DDD]" style={{ borderWidth: "2px" }}></div>
+                      </div>
+                      <p className="text-xl leading-[1.2] text-center text-[#4A4A4A] mb-8">
+                        {section.content.subtitle}
+                      </p>
+                      {/* Background 1 */}
+                      <div className="relative rounded-lg overflow-hidden">
+                        {section.content.useCustomImage ? (
+                          <img
+                            src={section.content.backgroundImage || "/placeholder.svg"}
+                            alt="Section Background"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
+                            style={{
+                              backgroundColor: section.styles.backgroundColor || "#F3F4F6",
+                              backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                              backgroundSize: "20px 20px",
+                            }}
+                          >
+                            <p
+                              className="font-medium"
+                              style={{
+                                color: section.styles.textColor || "#6B7280",
+                              }}
+                            >
+                              {section.content.overlayText}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      {/* Background 2 */}
+                      <div className="relative mt-16 rounded-lg overflow-hidden">
+                        {section.content.useCustomImage ? (
+                          <img
+                            src={section.content.backgroundImage2 || "/placeholder.svg"}
+                            alt="Section Background"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
+                            style={{
+                              backgroundColor: section.styles.backgroundColor || "#F3F4F6",
+                              backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                              backgroundSize: "20px 20px",
+                            }}
+                          >
+                            <p
+                              className="font-medium"
+                              style={{
+                                color: section.styles.textColor || "#6B7280",
+                              }}
+                            >
+                              {section.content.overlayText}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      {/* Delete Section Button (optional) */}
+                      <div className="flex justify-center mt-6">
+                        <button
+                          onClick={() => setSections(sections.filter((s: any) => s.id !== section.id))}
+                          className="delete-section-btn px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs"
+                        >
+                          Delete Section
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 {/* Time-Off Schedule */}
                 {sections.find((s: any) => s.id === "schedule")?.visible && (
                   <div id="section-schedule" className="pb-16">
