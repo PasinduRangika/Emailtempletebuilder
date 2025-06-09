@@ -290,6 +290,8 @@ const defaultSections = [
       overlayText: "Milestone Timeline Placeholder",
       titleTop: "Planned Tasks &",
       titleBottom: "Milestone",
+      showImage1: true,
+      showImage2: true,
     },
     styles: {
       backgroundColor: "#F3F4F6",
@@ -1496,6 +1498,24 @@ export default function WeeklyPlanBuilder() {
                                   className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
                                   placeholder="Overlay text"
                                 />
+                                <div className="flex items-center gap-2 mb-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={section.content.showImage1}
+                                    onChange={(e) => updateSectionContent(section.id, "showImage1", e.target.checked)}
+                                    className="w-3 h-3"
+                                  />
+                                  <span className="text-xs text-gray-700">Show First Placeholder/Image</span>
+                                </div>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <input
+                                    type="checkbox"
+                                    checked={section.content.showImage2}
+                                    onChange={(e) => updateSectionContent(section.id, "showImage2", e.target.checked)}
+                                    className="w-3 h-3"
+                                  />
+                                  <span className="text-xs text-gray-700">Show Second Placeholder/Image</span>
+                                </div>
                                 <div className="flex items-center gap-2">
                                   <input
                                     type="checkbox"
@@ -1915,21 +1935,28 @@ export default function WeeklyPlanBuilder() {
                   >
                     {/* Content overlay */}
                     <div
-                      className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-between p-8 w-[550px] h-[255px]"
+                      className="absolute top-[120px] left-[55px] z-10 flex flex-col justify-around p-8 w-[550px] h-fit min-h-[255px]"
                       style={{
                         backgroundColor: emailData.overlayBgColor,
                       }}
                     >
-                      <div className="flex  flex-col justify-between items-start h-full">
-                        <div className="text-[32px] font-bold text-[#0084EE]">
+                      <div className="flex  flex-col justify-center items-start h-full">
+                        <div className="text-[32px] font-bold text-[#0084EE] flex-shrink-0">
                           <img src={emailData.logo} alt="" className="w-[210px] h-[auto]" />
                         </div>
-                        <h1 className="text-[56px] font-bold mb-2" style={{ color: emailData.titleColor }}>
-                          {emailData.title}
-                        </h1>
-                        <p className="text-xl" style={{ color: emailData.dateRangeColor }}>
-                          {emailData.dateRange}
-                        </p>
+                        <div>
+                          <h1
+                            className="text-[56px] font-bold mb-2 mt-2 leading-[110%]"
+                            style={{ color: emailData.titleColor }}
+                          >
+                            {emailData.title}
+                          </h1>
+                        </div>
+                        <div>
+                          <p className="text-xl" style={{ color: emailData.dateRangeColor }}>
+                            {emailData.dateRange}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2198,66 +2225,68 @@ export default function WeeklyPlanBuilder() {
                     </p>
 
                     <div className="relative  rounded-lg overflow-hidden">
-                      {sections.find((s: any) => s.id === "milestones")?.content.useCustomImage ? (
-                        <img
-                          src={
-                            sections.find((s: any) => s.id === "milestones")?.content.backgroundImage ||
-                            "/placeholder.svg"
-                          }
-                          alt="Milestone Background"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div
-                          className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
-                          style={{
-                            backgroundColor:
-                              sections.find((s: any) => s.id === "milestones")?.styles?.backgroundColor || "#F3F4F6",
-                            backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
-                            backgroundSize: "20px 20px",
-                          }}
-                        >
-                          <p
-                            className="font-medium"
+                      {sections.find((s: any) => s.id === "milestones")?.content.showImage1 &&
+                        (sections.find((s: any) => s.id === "milestones")?.content.useCustomImage ? (
+                          <img
+                            src={
+                              sections.find((s: any) => s.id === "milestones")?.content.backgroundImage ||
+                              "/placeholder.svg"
+                            }
+                            alt="Milestone Background"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
                             style={{
-                              color: sections.find((s: any) => s.id === "milestones")?.styles?.textColor || "#6B7280",
+                              backgroundColor:
+                                sections.find((s: any) => s.id === "milestones")?.styles?.backgroundColor || "#F3F4F6",
+                              backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                              backgroundSize: "20px 20px",
                             }}
                           >
-                            {sections.find((s: any) => s.id === "milestones")?.content.overlayText}
-                          </p>
-                        </div>
-                      )}
+                            <p
+                              className="font-medium"
+                              style={{
+                                color: sections.find((s: any) => s.id === "milestones")?.styles?.textColor || "#6B7280",
+                              }}
+                            >
+                              {sections.find((s: any) => s.id === "milestones")?.content.overlayText}
+                            </p>
+                          </div>
+                        ))}
                     </div>
                     <div className="relative mt-16 rounded-lg overflow-hidden">
-                      {sections.find((s: any) => s.id === "milestones")?.content.useCustomImage ? (
-                        <img
-                          src={
-                            sections.find((s: any) => s.id === "milestones")?.content.backgroundImage2 ||
-                            "/placeholder.svg"
-                          }
-                          alt="Milestone Background"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div
-                          className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
-                          style={{
-                            backgroundColor:
-                              sections.find((s: any) => s.id === "milestones")?.styles?.backgroundColor || "#F3F4F6",
-                            backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
-                            backgroundSize: "20px 20px",
-                          }}
-                        >
-                          <p
-                            className="font-medium"
+                      {sections.find((s: any) => s.id === "milestones")?.content.showImage2 &&
+                        (sections.find((s: any) => s.id === "milestones")?.content.useCustomImage ? (
+                          <img
+                            src={
+                              sections.find((s: any) => s.id === "milestones")?.content.backgroundImage2 ||
+                              "/placeholder.svg"
+                            }
+                            alt="Milestone Background"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div
+                            className="w-full h-full border-2 border-dashed border-gray-300 flex items-center justify-center"
                             style={{
-                              color: sections.find((s: any) => s.id === "milestones")?.styles?.textColor || "#6B7280",
+                              backgroundColor:
+                                sections.find((s: any) => s.id === "milestones")?.styles?.backgroundColor || "#F3F4F6",
+                              backgroundImage: `radial-gradient(circle, #d1d5db 1px, transparent 1px)`,
+                              backgroundSize: "20px 20px",
                             }}
                           >
-                            {sections.find((s: any) => s.id === "milestones")?.content.overlayText}
-                          </p>
-                        </div>
-                      )}
+                            <p
+                              className="font-medium"
+                              style={{
+                                color: sections.find((s: any) => s.id === "milestones")?.styles?.textColor || "#6B7280",
+                              }}
+                            >
+                              {sections.find((s: any) => s.id === "milestones")?.content.overlayText}
+                            </p>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 )}
