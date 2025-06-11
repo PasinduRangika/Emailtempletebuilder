@@ -2730,6 +2730,61 @@ export default function WeeklyPlanBuilder() {
             >
               Save as Draft
             </button>
+            {/* Export/Import Buttons */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => {
+                  if (drafts.length === 0) {
+                    alert("Before export, please save a draft!");
+                    return;
+                  }
+                  const dataStr = JSON.stringify(drafts, null, 2);
+                  const blob = new Blob([dataStr], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "email-builder-drafts.json";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-2 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs"
+              >
+                Export Drafts
+              </button>
+              <label className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs cursor-pointer">
+                Import Drafts
+                <input
+                  type="file"
+                  accept="application/json"
+                  style={{ display: "none" }}
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    try {
+                      const text = await file.text();
+                      const importedDrafts = JSON.parse(text);
+
+                      if (!Array.isArray(importedDrafts)) {
+                        alert("Invalid file format.");
+                        return;
+                      }
+
+                      // Avoid duplicate IDs, merge by name+createdAt or just append with new IDs
+                      const newDrafts = importedDrafts.map((d) => ({
+                        ...d,
+                        id: d.id || `${Date.now()}-${Math.random()}`,
+                      }));
+                      const merged = [...newDrafts, ...drafts];
+                      setDrafts(merged);
+                      saveDrafts(merged);
+                      alert("Drafts imported!");
+                    } catch (err) {
+                      alert("Failed to import: " + err.message);
+                    }
+                  }}
+                />
+              </label>
+            </div>
             <div className="mb-4">
               <h4 className="font-semibold mb-1">Drafts</h4>
               {drafts.length === 0 && <div className="text-gray-400 text-sm">No drafts yet.</div>}
