@@ -885,14 +885,29 @@ export default function WeeklyPlanBuilder() {
     }
   };
 
-  const downloadAllSections = async () => {
-    const visibleSections = sections.filter((section: any) => section.visible);
+  // const downloadAllSections = async () => {
+  //   const visibleSections = sections.filter((section: any) => section.visible);
 
+  //   for (const section of visibleSections) {
+  //     await downloadSectionAsImage(section.id);
+  //     // Add a small delay between downloads to prevent browser issues
+  //     await new Promise((resolve) => setTimeout(resolve, 500));
+  //   }
+  // };
+
+  const downloadAllSections = async () => {
+    // Download header first
+    await downloadSectionAsImage("header");
+
+    // Download all visible sections
+    const visibleSections = sections.filter((section: any) => section.visible);
     for (const section of visibleSections) {
       await downloadSectionAsImage(section.id);
-      // Add a small delay between downloads to prevent browser issues
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
+
+    // Download footer last (optional, if you want)
+    await downloadSectionAsImage("footer");
   };
 
   // Add click outside handler to close dropdown
