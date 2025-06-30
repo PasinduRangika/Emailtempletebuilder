@@ -244,6 +244,9 @@ const defaultSections = [
       text: "Below are the latest updates across key workstreams, including current progress, project status, and associated priorities.",
       titleTop: "Important",
       titleBottom: "Updates",
+      backgroundImage: "/placeholder.svg?height=200&width=800",
+      backgroundImage2: "/placeholder.svg?height=200&width=800",
+      useCustomImage: false,
       projects: [
         {
           id: "1",
@@ -671,6 +674,22 @@ export default function WeeklyPlanBuilder() {
         return (
           <img
             src="https://res.cloudinary.com/diii9yu7r/image/upload/v1748503181/issuseicon_hggv4a.png"
+            alt="In Progress"
+            className="w-[17px] h-[auto]"
+          />
+        );
+      case "meetings-scheduled":
+        return (
+          <img
+            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1751271417/9926396_nahf1h.png"
+            alt="In Progress"
+            className="w-[17px] h-[auto]"
+          />
+        );
+      case "upcoming-releases":
+        return (
+          <img
+            src="https://res.cloudinary.com/diii9yu7r/image/upload/v1751271417/images_3_dvnjha.png"
             alt="In Progress"
             className="w-[17px] h-[auto]"
           />
@@ -1198,6 +1217,8 @@ export default function WeeklyPlanBuilder() {
                                     <option value="completed">Completed</option>
                                     <option value="progress">In Progress</option>
                                     <option value="blocked">Blocked</option>
+                                    <option value="meetings-scheduled">Meetings Scheduled</option>
+                                    <option value="upcoming-releases">Upcoming Releases</option>
                                   </select>
                                 </div>
                               ))}
@@ -1232,6 +1253,37 @@ export default function WeeklyPlanBuilder() {
                                 </div>
                               ))}
                             </div>
+                            {/* 
+                            <div className=" space-y-2">
+                              <div className="flex items-center gap-2 mb-2">
+                                <input
+                                  type="checkbox"
+                                  checked={section.content.showImage1}
+                                  onChange={(e) => updateSectionContent(section.id, "showImage3", e.target.checked)}
+                                  className="w-3 h-3"
+                                />
+                                <span className="text-xs text-gray-700">Show Placeholder/Image</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={section.content.useCustomImage}
+                                  onChange={(e) => updateSectionContent(section.id, "useCustomImage", e.target.checked)}
+                                  className="w-3 h-3"
+                                />
+                                <span className="text-xs text-gray-700">Use custom image</span>
+                              </div>
+
+                              {section.content.useCustomImage && (
+                                <input
+                                  type="text"
+                                  value={section.content.backgroundImage}
+                                  onChange={(e) => updateSectionContent(section.id, "backgroundImage", e.target.value)}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Background image URL"
+                                />
+                              )}
+                            </div> */}
                           </>
                         )}
 
@@ -1309,6 +1361,35 @@ export default function WeeklyPlanBuilder() {
                                 </select>
                               </div>
                             ))}
+                            <div className="pt-5">
+                              <div className="flex items-center gap-2">
+                                <input
+                                  type="checkbox"
+                                  checked={section.content.useCustomImage}
+                                  onChange={(e) => updateSectionContent(section.id, "useCustomImage", e.target.checked)}
+                                  className="w-3 h-3"
+                                />
+                                <span className="text-xs text-gray-700">Use custom image</span>
+                              </div>
+                              {section.content.useCustomImage && (
+                                <input
+                                  type="text"
+                                  value={section.content.backgroundImage}
+                                  onChange={(e) => updateSectionContent(section.id, "backgroundImage", e.target.value)}
+                                  className="w-full px-2 mb-3 mt-4 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Background image URL"
+                                />
+                              )}
+                              {section.content.useCustomImage && (
+                                <input
+                                  type="text"
+                                  value={section.content.backgroundImage2}
+                                  onChange={(e) => updateSectionContent(section.id, "backgroundImage2", e.target.value)}
+                                  className="w-full px-2 py-1 border border-gray-300 rounded text-xs"
+                                  placeholder="Background image URL"
+                                />
+                              )}
+                            </div>
                           </div>
                         )}
 
@@ -2214,6 +2295,32 @@ export default function WeeklyPlanBuilder() {
                             </div>
                           );
                         })}
+                    </div>
+                    <div className="relative  rounded-lg overflow-hidden px-8">
+                      <div className="py-8">
+                        {sections.find((s: any) => s.id === "updates")?.content.useCustomImage && (
+                          <img
+                            src={
+                              sections.find((s: any) => s.id === "updates")?.content.backgroundImage ||
+                              "/placeholder.svg"
+                            }
+                            alt="updates background"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        )}
+                      </div>
+                      <div className="py-8 ">
+                        {sections.find((s: any) => s.id === "updates")?.content.useCustomImage && (
+                          <img
+                            src={
+                              sections.find((s: any) => s.id === "updates")?.content.backgroundImage2 ||
+                              "/placeholder.svg"
+                            }
+                            alt="updates background"
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
